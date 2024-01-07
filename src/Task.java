@@ -10,6 +10,12 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
     }
+    public Task(String name, String description, TaskStatus taskStatus) {
+        this.name = name;
+        this.description = description;
+        this.taskStatus = taskStatus;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -38,6 +44,14 @@ public class Task {
 
     public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
 
