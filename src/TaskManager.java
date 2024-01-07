@@ -11,28 +11,28 @@ public class TaskManager {
     public int addTask(Task task) {
         task = new Task(id++, task.getName(), task.getDescription(), task.getTaskStatus());
         tasks.put(task.getId(), task);
-        return id;
+        return task.getId();
     }
 
     public int addEpic(Epic epic) {
         epic = new Epic(id++, epic.getName(), epic.getDescription(), epic.getTaskStatus());
         epics.put(epic.getId(), epic);
-        return id;
+        return epic.getId();
     }
 
     public ArrayList<Subtask> getEpicSubTaskList(int id) {
         return epics.get(id).getSubTaskList();
     }
 
-    public int addSubTask(Subtask subtask, int epicId) {
-        subtask = new Subtask(id++, subtask.getName(), subtask.getDescription(), subtask.getTaskStatus());
-        subtask.setEpicId(epicId);
+    public int addSubTask(Subtask subtask) {
+        subtask = new Subtask(id++, subtask.getName(), subtask.getDescription(),
+                subtask.getTaskStatus(), subtask.getEpicId());
+        int epicId = subtask.getEpicId();
         Epic subTaskEpic = searchEpic(epicId);
-        ArrayList<Subtask> epicSubTaskList = subTaskEpic.getSubTaskList();
         epics.get(epicId).getSubTaskList().add(subtask);
         statusCheckSubTask(subTaskEpic);
         subTasks.put(subtask.getId(), subtask);
-        return id;
+        return subtask.getId();
     }
 
     public ArrayList<Task> getTasks() {
@@ -60,7 +60,7 @@ public class TaskManager {
         ArrayList<Subtask> epicSubTaskList = subTaskEpic.getSubTaskList();
 
         for (int i = 0; i < epicSubTaskList.size(); i++) {
-            if (epicSubTaskList.get(i).getId() == id) {
+            if (epicSubTaskList.get(i).getId() == subtask.getId()) {
                 epicSubTaskList.set(i, subtask);
             }
         }
@@ -88,16 +88,6 @@ public class TaskManager {
     }
 
 
-    public void delete(int id) {
-        if (tasks.get(id) != null) {
-            tasks.remove(id);
-        } else if (epics.get(id) != null) {
-            epics.remove(id);
-        } else if (subTasks.get(id) != null) {
-            subTasks.remove(id);
-        }
-    }
-
     public void deleteTask(int id) {
         tasks.remove(id);
     }
@@ -105,7 +95,7 @@ public class TaskManager {
     public void deleteEpic(int id) {
         ArrayList<Subtask> deletedList = searchEpic(id).getSubTaskList();
         for (Subtask sub : deletedList) {
-            subTasks.remove(sub);
+            subTasks.remove(sub.getId());
         }
         deletedList.clear();
         epics.remove(id);
@@ -126,9 +116,9 @@ public class TaskManager {
         int checkDone = 0;
         int chekNew = 0;
         for (Subtask subtask : epicSubTaskList) {
-            if (subtask.getTaskStatus().equals(TaskStatus.DONE)) {
+            if (subtask.getTaskStatus() == TaskStatus.DONE) {
                 checkDone += 1;
-            } else if (subtask.getTaskStatus().equals(TaskStatus.NEW)) {
+            } else if (subtask.getTaskStatus() == TaskStatus.NEW) {
                 chekNew += 1;
             }
         }

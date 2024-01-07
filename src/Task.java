@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Task {
     private int id;
     private String name;
@@ -14,20 +16,6 @@ public class Task {
         this.name = name;
         this.description = description;
         this.taskStatus = taskStatus;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
-        return id == task.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 
     public int getId() {
@@ -52,6 +40,30 @@ public class Task {
 
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", taskStatus=" + taskStatus +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        if (id == task.id) return true;
+        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && taskStatus == task.taskStatus;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, taskStatus);
     }
 }
 
