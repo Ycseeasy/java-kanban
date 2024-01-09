@@ -9,13 +9,13 @@ public class TaskManager {
 
 
     public int addTask(Task task) {
-        task = new Task(id++, task.getName(), task.getDescription(), task.getTaskStatus());
+        task.setId(id++);
         tasks.put(task.getId(), task);
         return task.getId();
     }
 
     public int addEpic(Epic epic) {
-        epic = new Epic(id++, epic.getName(), epic.getDescription(), epic.getTaskStatus());
+        epic.setId(id++);
         epics.put(epic.getId(), epic);
         return epic.getId();
     }
@@ -25,11 +25,10 @@ public class TaskManager {
     }
 
     public int addSubTask(Subtask subtask) {
-        subtask = new Subtask(id++, subtask.getName(), subtask.getDescription(),
-                subtask.getTaskStatus(), subtask.getEpicId());
+        subtask.setId(id++);
         int epicId = subtask.getEpicId();
-        Epic subTaskEpic = searchEpic(epicId);
-        epics.get(epicId).getSubTaskList().add(subtask);
+        Epic subTaskEpic = epics.get(epicId);
+        subTaskEpic.getSubTaskList().add(subtask);
         statusCheckSubTask(subTaskEpic);
         subTasks.put(subtask.getId(), subtask);
         return subtask.getId();
