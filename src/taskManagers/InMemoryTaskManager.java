@@ -1,9 +1,9 @@
-package TaskManagers;
+package taskManagers;
 
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
-import Tasks.TaskStatus;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
+import tasks.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,17 +54,17 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public ArrayList<Task> getTasks() {
+    public List<Task> getTasks() {
         return new ArrayList<Task>(tasks.values());
     }
 
     @Override
-    public ArrayList<Epic> getEpics() {
+    public List<Epic> getEpics() {
         return new ArrayList<Epic>(epics.values());
     }
 
     @Override
-    public ArrayList<Subtask> getSubTasks() {
+    public List<Subtask> getSubTasks() {
         return new ArrayList<Subtask>(subTasks.values());
     }
 

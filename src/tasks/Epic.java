@@ -1,7 +1,4 @@
-package Tasks;
-
-import Tasks.Subtask;
-import Tasks.Task;
+package tasks;
 
 import java.util.ArrayList;
 

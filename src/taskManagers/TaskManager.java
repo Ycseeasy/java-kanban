@@ -1,8 +1,8 @@
-package TaskManagers;
+package taskManagers;
 
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +16,11 @@ public interface TaskManager {
 
     ArrayList<Subtask> getEpicSubTaskList(int id);
 
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
-    ArrayList<Epic> getEpics();
+    List<Epic> getEpics();
 
-    ArrayList<Subtask> getSubTasks();
+    List<Subtask> getSubTasks();
 
     Task updTask(Task task);
 

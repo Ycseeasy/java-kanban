@@ -1,10 +1,10 @@
-import TaskManagers.InMemoryHistoryManager;
-import TaskManagers.InMemoryTaskManager;
-import TaskManagers.Managers;
-import Tasks.Epic;
-import Tasks.Subtask;
-import Tasks.Task;
-import Tasks.TaskStatus;
+import taskManagers.InMemoryHistoryManager;
+import taskManagers.InMemoryTaskManager;
+import taskManagers.Managers;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
+import tasks.TaskStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
