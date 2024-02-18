@@ -140,11 +140,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(int id) {
+        hisManager.remove(id);
         tasks.remove(id);
     }
 
     @Override
     public void deleteEpic(int id) {
+        hisManager.remove(id);
         ArrayList<Subtask> deletedList = getEpic(id).getSubTaskList();
         for (Subtask sub : deletedList) {
             subTasks.remove(sub.getId());
@@ -155,6 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteSubTask(int id) {
+        hisManager.remove(id);
         Subtask searchSub = getSubTask(id);
         int delEpicId = searchSub.getEpicId();
         Epic getEpic = getEpic(delEpicId);
