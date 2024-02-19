@@ -2,11 +2,11 @@ package taskManagers;
 
 import tasks.Task;
 
-public class Node<Task> {
+public class Node {
 
     public Task task;
-    public Node<Task> next;
-    public Node<Task> prev;
+    public Node next;
+    public Node prev;
 
     public Node(Task task) {
         this.task = task;
