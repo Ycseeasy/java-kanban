@@ -101,12 +101,13 @@ class ProjectTest {
         manager.getTask(task.getId());
         manager.getTask(task2.getId());
         List<Task> history = manager.getHistory();
-        assertNotEquals(history.get(0), history.get(1));
         assertEquals(history.size(), 2);
+        assertEquals(history.get(0), task);
+        assertEquals(history.get(1), task2);
     }
 
     @Test
-    void shouldDoNotSaveOldIdINDeletedSubtaskInTaskManage() {
+    void shouldDoNotSaveOldIdINDeletedSubtaskInTaskManager() {
         InMemoryTaskManager manager = Managers.getDefault();
         Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW));
 
