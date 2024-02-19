@@ -106,7 +106,7 @@ class ProjectTest {
     }
 
     @Test
-    void shouldDoNotSaveOldIdINDeletedSubtaskInTaskManager() {
+    void shouldDoNotSaveOldIdINDeletedSubtaskInTaskManage() {
         InMemoryTaskManager manager = Managers.getDefault();
         Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW));
 
