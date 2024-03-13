@@ -32,10 +32,6 @@ public interface TaskManager {
 
     Task getTask(int id);
 
-    Epic getEpic(int id);
-
-    Subtask getSubTask(int id);
-
     void deleteTask(int id);
 
     void deleteEpic(int id);

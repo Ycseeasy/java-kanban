@@ -18,10 +18,9 @@ public class InMemoryHistoryManager implements HistoryManager {
             remove(task.getId());
             hashId.remove(task.getId());
         }
-        Node taskNode = linkedLast(task);
-        int id = task.getId();
-        hashId.put(id, taskNode);
-
+            Node taskNode = linkedLast(task);
+            int id = task.getId();
+            hashId.put(id, taskNode);
     }
 
 
