@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subTasks = new HashMap<>();
+    protected final HashMap<Integer, Task> tasks = new HashMap<>();
+    protected final HashMap<Integer, Epic> epics = new HashMap<>();
+    protected final HashMap<Integer, Subtask> subTasks = new HashMap<>();
     int id = 0;
 
-    private final InMemoryHistoryManager hisManager = Managers.getDefaultHistory();
+    protected final InMemoryHistoryManager hisManager = Managers.getDefaultHistory();
 
 
     @Override
@@ -33,7 +33,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Subtask> getEpicSubTaskList(int id) {
+    public List<Subtask> getEpicSubTaskList(int id) {
         return epics.get(id).getSubTaskList();
     }
 
@@ -41,14 +41,14 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask addSubTask(Subtask subtask) {
         subtask.setId(id++);
         int epicId = subtask.getEpicId();
-        Epic subTaskEpic = epics.get(epicId);
-        if (subTaskEpic == null) {
-            return null;
-        } else {
-            subTaskEpic.getSubTaskList().add(subtask);
-            statusCheckSubTask(subTaskEpic);
+        if (epics.get(epicId) != null) {
+            Epic epic = epics.get(epicId);
+            epic.getSubTaskList().add(subtask);
+            statusCheckSubTask(epic);
             subTasks.put(subtask.getId(), subtask);
             return subtask;
+        } else {
+            return null;
         }
     }
 
@@ -93,7 +93,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (!subTasks.containsKey(subtask.getId())) {
             return null;
         } else {
-            Epic subTaskEpic = getEpic(subtask.getEpicId());
+            Epic subTaskEpic = (Epic) getTask(subtask.getEpicId());
             if (subTaskEpic == null) {
                 return null;
             } else {
@@ -121,22 +121,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTask(int id) {
-        hisManager.add(tasks.get(id));
-        return tasks.get(id);
+        if (tasks.containsKey(id)) {
+            hisManager.add(tasks.get(id));
+            return tasks.get(id);
+        } else if (epics.containsKey(id)) {
+            Epic epic = epics.get(id);
+            hisManager.add(epic);
+            return epic;
+        } else if (subTasks.containsKey(id)) {
+            Subtask subtask = subTasks.get(id);
+            hisManager.add(subtask);
+            return subtask;
+        } else {
+            return null;
+        }
     }
-
-    @Override
-    public Epic getEpic(int id) {
-        hisManager.add(epics.get(id));
-        return epics.get(id);
-    }
-
-    @Override
-    public Subtask getSubTask(int id) {
-        hisManager.add(subTasks.get(id));
-        return subTasks.get(id);
-    }
-
 
     @Override
     public void deleteTask(int id) {
@@ -147,7 +146,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpic(int id) {
         hisManager.remove(id);
-        ArrayList<Subtask> deletedList = getEpic(id).getSubTaskList();
+        Epic epic = (Epic) getTask(id);
+        ArrayList<Subtask> deletedList = epic.getSubTaskList();
         for (Subtask sub : deletedList) {
             subTasks.remove(sub.getId());
         }
@@ -158,9 +158,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTask(int id) {
         hisManager.remove(id);
-        Subtask searchSub = getSubTask(id);
+        Subtask searchSub = (Subtask) getTask(id);
         int delEpicId = searchSub.getEpicId();
-        Epic getEpic = getEpic(delEpicId);
+        Epic getEpic = (Epic) getTask(delEpicId);
         ArrayList<Subtask> delListEpicId = getEpic.getSubTaskList();
         delListEpicId.remove(searchSub);
         statusCheckSubTask(getEpic);
