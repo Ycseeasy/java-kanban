@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class ManagerSaveException extends RuntimeException {
 
-    String textError;
+    private String textError;
     public ManagerSaveException(String textError) {
         this.textError = textError;
     }

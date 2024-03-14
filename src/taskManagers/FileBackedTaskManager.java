@@ -5,13 +5,11 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    File file;
+    private File file;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -104,7 +102,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public ArrayList<Subtask> getEpicSubTaskList(int id) {
+    public List<Subtask> getEpicSubTaskList(int id) {
         return super.getEpicSubTaskList(id);
     }
 
