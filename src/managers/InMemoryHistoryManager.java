@@ -5,6 +5,7 @@ import tasks.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 public class InMemoryHistoryManager implements HistoryManager {
     private Node head = null;
     private Node tail = null;
@@ -16,9 +17,9 @@ public class InMemoryHistoryManager implements HistoryManager {
             remove(task.getId());
             hashId.remove(task.getId());
         }
-            Node taskNode = linkedLast(task);
-            int id = task.getId();
-            hashId.put(id, taskNode);
+        Node taskNode = linkedLast(task);
+        int id = task.getId();
+        hashId.put(id, taskNode);
     }
 
 
