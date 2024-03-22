@@ -1,7 +1,7 @@
 import org.junit.jupiter.api.Test;
-import taskManagers.FileBackedTaskManager;
-import taskManagers.InMemoryTaskManager;
-import taskManagers.Managers;
+import Managers.FileBackedTaskManager;
+import Managers.InMemoryTaskManager;
+import Managers.Managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
