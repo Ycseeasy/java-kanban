@@ -1,10 +1,8 @@
-package taskManagers;
-
-import java.io.IOException;
+package Exception;
 
 public class ManagerSaveException extends RuntimeException {
 
-    private String textError;
+    private final String textError;
     public ManagerSaveException(String textError) {
         this.textError = textError;
     }

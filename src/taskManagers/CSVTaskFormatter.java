@@ -5,7 +5,13 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class CSVTaskFormatter {
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
 
     public String fromTask(Task task) {
         StringBuilder sb = new StringBuilder();
@@ -28,7 +34,12 @@ public class CSVTaskFormatter {
         String name = task.getName();
         String taskStatus = task.getTaskStatus().toString();
         String description = task.getDescription();
-
+        long duration = task.getDuration().toMinutes();
+        String startTimeS = null;
+        if (task.getStartTime() != null) {
+            LocalDateTime startTime = task.getStartTime();
+            startTimeS = startTime.format(formatter);
+        }
         sb.append(id);
         sb.append(",");
         sb.append(type);
@@ -39,6 +50,18 @@ public class CSVTaskFormatter {
         sb.append(",");
         sb.append(description);
         sb.append(",");
+        sb.append(duration);
+        sb.append(",");
+        sb.append(startTimeS);
+        sb.append(",");
+
+        if (task.getClass() == Epic.class) {
+            LocalDateTime endTime = task.getEndTime();
+            if (endTime != null) {
+                String endTimeS = endTime.format(formatter);
+                sb.append(endTimeS);
+            }
+        }
         if (task.getClass() == Subtask.class) {
             int epicId = ((Subtask) task).getEpicId();
             sb.append(epicId);
@@ -51,14 +74,17 @@ public class CSVTaskFormatter {
     public Task fromString(String[] texts) {
         int id = Integer.parseInt(texts[0]);
         TaskStatus status = TaskStatus.valueOf(texts[3]);
+        Duration duration = Duration.ofMinutes(Long.parseLong(texts[5]));
+        LocalDateTime startTime = LocalDateTime.parse(texts[6], formatter);
         switch (texts[1]) {
             case "Task":
-                return new Task(id, texts[2], texts[4], status);
+                return new Task(id, texts[2], texts[4], status, duration, startTime);
             case "Epic":
-                return new Epic(id, texts[2], texts[4], status);
+                LocalDateTime endTime = LocalDateTime.parse(texts[7], formatter);
+                return new Epic(id, texts[2], texts[4], status, duration, startTime, endTime);
             case "Subtask":
-                int epicId = Integer.parseInt(texts[5]);
-                return new Subtask(id, texts[2], texts[4], status, epicId);
+                int epicId = Integer.parseInt(texts[7]);
+                return new Subtask(id, texts[2], texts[4], status, epicId, duration, startTime);
             default:
                 return null;
         }

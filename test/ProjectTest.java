@@ -1,70 +1,69 @@
-import org.junit.jupiter.api.DisplayName;
-import taskManagers.InMemoryHistoryManager;
+import org.junit.jupiter.api.Test;
 import taskManagers.FileBackedTaskManager;
+import taskManagers.InMemoryHistoryManager;
 import taskManagers.Managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
-import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ProjectTest {
 
     @Test // Тест по 1 вопросу
-    public void taskEquals() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Task task1 = manager.addTask(new Task("Гантели", "Поднимать гантели", TaskStatus.NEW));
-        Task task2 = new Task(task1.getId(), "Турник", "Подтягиваться на турнике",
+    public void taskEquals() throws IOException {
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int task1id = manager.addTask(new Task("Гантели", "Поднимать гантели", TaskStatus.NEW));
+        Task task = new Task(task1id,"Турник", "Подтягиваться на турнике",
                 TaskStatus.NEW);
-        assertEquals(task1, task2);
+        assertEquals(manager.searchTask(task1id), task);
     }
 
     @Test // Тест по 2 вопросу
-    public void epicEquals() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Epic epic1 = manager.addEpic(new Epic("Утром", "Тренировка утром", TaskStatus.NEW));
-        Epic epic2 = new Epic(epic1.getId(), "Вечером", "Тренировка вечером", TaskStatus.NEW);
-        assertEquals(epic1, epic2);
+    public void epicEquals() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int epicId = manager.addEpic(new Epic("Утром", "Тренировка утром", TaskStatus.NEW));
+        Epic epic2 = new Epic(epicId, "Вечером", "Тренировка вечером", TaskStatus.NEW);
+        assertEquals(manager.searchTask(epicId), epic2);
     }
 
     @Test  // Тест по 2 вопросу
-    public void subTaskEquals() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Epic epic1 = manager.addEpic(new Epic("Утром", "Тренировка утром", TaskStatus.NEW));
-        Subtask subtask1 = manager.addSubTask(new Subtask("Пресс качат",
-                "Качат пресс", TaskStatus.NEW, epic1.getId()));
-        Subtask subtask2 = new Subtask(subtask1.getId(), "Бегит",
-                "Бегит по кругу", TaskStatus.NEW, epic1.getId());
-        assertEquals(subtask1, subtask2);
+    public void subTaskEquals() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int epicId = manager.addEpic(new Epic("Утром", "Тренировка утром", TaskStatus.NEW));
+        int subtask1Id = manager.addSubTask(new Subtask("Пресс качат",
+                "Качат пресс", TaskStatus.NEW, epicId));
+        Subtask subtask2 = new Subtask(subtask1Id, "Бегит",
+                "Бегит по кругу", TaskStatus.NEW, epicId);
+        assertEquals(manager.searchTask(subtask1Id), subtask2);
     }
 
     @Test // Тест по 3 вопросу
-    public void notAddSubTaskToNowhere() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Subtask subtask = manager.addSubTask(new Subtask("Пресс качат",
+    public void notAddSubTaskToNowhere() throws IOException {
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int subtaskid = manager.addSubTask(new Subtask("Пресс качат",
                 "Качат пресс", TaskStatus.NEW, 7633337));
-        assertNull(subtask);
+        assertNull(manager.searchTask(subtaskid));
     }
 
     @Test // Тест по 4 вопросу
-    public void notUpdSubTaskToEpicOrElse() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Epic epic1 = manager.addEpic(new Epic("Утром", "Тренировка утром", TaskStatus.NEW));
-        Subtask subtask1 = manager.addSubTask(new Subtask("Пресс качат",
-                "Качат пресс", TaskStatus.NEW, epic1.getId()));
-        Epic epicSubtask = manager.updEpic(new Epic(subtask1.getId(),
+    public void notUpdSubTaskToEpicOrElse() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int epic1ID = manager.addEpic(new Epic("Утром", "Тренировка утром", TaskStatus.NEW));
+        int subtask1ID = manager.addSubTask(new Subtask("Пресс качат",
+                "Качат пресс", TaskStatus.NEW, epic1ID));
+        int epicSubtaskID = manager.updEpic(new Epic(subtask1ID,
                 "Из сабтаска", "Превращаюсь в Эпик", TaskStatus.NEW));
-        assertNull(epicSubtask);
+        assertNull(manager.searchTask(epicSubtaskID));
     }
 
     @Test // Тест по 5 вопросу
-    public void utilitarianClassCheck() {
-        FileBackedTaskManager manager = Managers.getDefault();
+    public void utilitarianClassCheck() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
         InMemoryHistoryManager hManager = Managers.getDefaultHistory();
         assertNotNull(manager);
         assertNotNull(hManager);
@@ -72,55 +71,57 @@ class ProjectTest {
 
     @Test
         // Тест по 6 вопросу
-    void inMemoryTaskManagerWork() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Task task = manager.addTask(new Task("Task", "new", TaskStatus.NEW));
-        Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW));
-        Subtask subtask = manager.addSubTask(new Subtask("Subtask", "new",
-                TaskStatus.NEW, epic.getId()));
-        assertEquals(task, manager.getTask(task.getId()));
-        Epic epic1 = (Epic) manager.getTask(epic.getId());
-        assertEquals(epic, epic1);
-        assertEquals(subtask, manager.getTask(subtask.getId()));
+    void inMemoryTaskManagerWork() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int taskID = manager.addTask(new Task("Task", "new", TaskStatus.NEW));
+        int epicID = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW));
+        int subtaskID = manager.addSubTask(new Subtask("Subtask", "new",
+                TaskStatus.NEW, epicID));
+        assertEquals(new Task(taskID,"Task", "new", TaskStatus.NEW), manager.searchTask(taskID));
+        Epic epic1 = (Epic) manager.searchTask(epicID);
+        assertEquals(new Epic(epicID,"Epic", "new", TaskStatus.NEW), epic1);
+        assertEquals(new Subtask(subtaskID,"Subtask", "new",
+                TaskStatus.NEW, epicID), manager.searchTask(subtaskID));
     }
 
     @Test
         // Тест по 7 вопросу
-    void createIdAndGenerateId() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Task task = manager.addTask(new Task("Task", "new", TaskStatus.NEW));
-        Task task2 = manager.addTask(new Task(task.getId(), "Task", "new", TaskStatus.NEW));
-        assertNotEquals(task.getId(), task2.getId());
+    void createIdAndGenerateId() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int task = manager.addTask(new Task("Task", "new", TaskStatus.NEW));
+        int task2 = manager.addTask(new Task(task, "Task", "new", TaskStatus.NEW));
+        assertNotEquals(task, task2);
     }
 
     @Test
-    void historyNotSaveViewSimilarTask() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Task task = manager.addTask(new Task("Task", "123", TaskStatus.NEW));
-        Task task2 = manager.addTask(new Task("Tusk", "321", TaskStatus.NEW));
-        manager.getTask(task.getId());
-        manager.getTask(task.getId());
-        manager.getTask(task2.getId());
+    void historyNotSaveViewSimilarTask() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int task = manager.addTask(new Task("Task", "123", TaskStatus.NEW));
+        int task2 = manager.addTask(new Task("Tusk", "321", TaskStatus.NEW));
+        System.out.println(manager.getTasks());
+        manager.searchTask(task);
+        manager.searchTask(task);
+        manager.searchTask(task2);
         List<Task> history = manager.getHistory();
         assertEquals(history.size(), 2);
-        assertEquals(history.get(0), task);
-        assertEquals(history.get(1), task2);
+        assertEquals(history.get(0), manager.searchTask(task));
+        assertEquals(history.get(1), manager.searchTask(task2));
     }
 
     @Test
-    void shouldDoNotSaveOldIdINDeletedSubtaskInTaskManager() {
-        FileBackedTaskManager manager = Managers.getDefault();
-        Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW));
+    void shouldDoNotSaveOldIdINDeletedSubtaskInTaskManager() throws IOException{
+        FileBackedTaskManager manager = Managers.getDefaultFile();
+        int epicID = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW));
 
-        Subtask subtask1 = manager.addSubTask(new Subtask("Subtask", "new",
-                TaskStatus.NEW, epic.getId()));
-        Subtask subtask2 = manager.addSubTask(new Subtask("Subtask1", "new",
-                TaskStatus.NEW, epic.getId()));
-        Subtask subtask3 = manager.addSubTask(new Subtask("Subtask2", "new",
-                TaskStatus.NEW, epic.getId()));
+        int subtask1ID = manager.addSubTask(new Subtask("Subtask", "new",
+                TaskStatus.NEW, epicID));
+        int subtask2ID = manager.addSubTask(new Subtask("Subtask1", "new",
+                TaskStatus.NEW, epicID));
+        int subtask3ID = manager.addSubTask(new Subtask("Subtask2", "new",
+                TaskStatus.NEW, epicID));
 
-        manager.deleteSubTask(subtask2.getId());
+        manager.deleteTask(subtask2ID);
         List<Subtask> subtasks = manager.getSubTasks();
-        assertEquals(List.of(subtask1, subtask3), subtasks);
+        assertEquals(List.of(manager.searchTask(subtask1ID), manager.searchTask(subtask3ID)), subtasks);
     }
 }
