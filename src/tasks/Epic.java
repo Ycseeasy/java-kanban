@@ -20,6 +20,7 @@ public class Epic extends Task {
         super(id, name, description, taskStatus, startTime);
         // Конструктор для создания из InMemoryTaskManager + для апдейта
     }
+
     public Epic(int id, String name, String description,
                 TaskStatus taskStatus) {
         super(id, name, description, taskStatus);
