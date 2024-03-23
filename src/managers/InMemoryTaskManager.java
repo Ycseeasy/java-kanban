@@ -104,7 +104,6 @@ public class InMemoryTaskManager implements TaskManager {
                 if (updatedEpic != null) {
                     updatedEpic.addToSubList(addedSubtask);
                     subTasks.put(addedSubtask.getId(), addedSubtask);
-                    addToPrioritizedList(updatedEpic.getId());
                     return addedSubtask;
                 } else {
                     motherEpic.removeFromList(addedSubtask);
@@ -188,7 +187,9 @@ public class InMemoryTaskManager implements TaskManager {
             Epic udatedEpic = checkEpic(epic);
             if (udatedEpic != null) {
                 epics.put(udatedEpic.getId(), udatedEpic);
-                addToPrioritizedList(udatedEpic.getId());
+                if (udatedEpic.getStartTime() != null) {
+                    addToPrioritizedList(udatedEpic.getId());
+                }
                 return udatedEpic;
             } else {
                 throw new ManagerUpdException("Произошла ошибка при обновлении Епика");
