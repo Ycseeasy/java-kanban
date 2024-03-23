@@ -7,11 +7,11 @@ import tasks.Task;
 import java.util.List;
 
 public interface TaskManager {
-    int addTask(Task task);
+    Task addTask(Task task);
 
-    int addSubTask(Subtask subtask);
+    Subtask addSubTask(Subtask subtask);
 
-    int addEpic(Epic epic);
+    Epic addEpic(Epic epic);
 
     List<Subtask> getEpicSubTaskList(int id);
 
@@ -23,11 +23,11 @@ public interface TaskManager {
 
     List<Task> getPrioritizedTasks();
 
-    int updTask(Task task);
+    Task updTask(Task task);
 
-    int updEpic(Epic epic);
+    Epic updEpic(Epic epic);
 
-    int updSubTask(Subtask subtask);
+    Subtask updSubTask(Subtask subtask);
 
     void removeAll();
 

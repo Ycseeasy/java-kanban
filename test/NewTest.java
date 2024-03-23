@@ -14,9 +14,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NewTest {
     @Test
@@ -30,41 +28,40 @@ public class NewTest {
         Duration durationSubtask1 = Duration.ofMinutes(60);
 
         // Создаем епик с таской
-        int epicID = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, timeEpic));
-        int subtask1ID = manager.addSubTask(new Subtask("Subtask", "new",
-                TaskStatus.NEW, epicID, durationSubtask, timeSubtask));
-
+        Epic epic0 = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, timeEpic));
+        Subtask subtask1 = manager.addSubTask(new Subtask("Subtask", "new",
+                TaskStatus.NEW, epic0.getId(), durationSubtask, timeSubtask));
         // проверяем, что ендтайм сабки равен енд тайму епика, в который она входит
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask1ID).getEndTime());
+        assertEquals(manager.searchTask(epic0.getId()).getEndTime(),subtask1.getEndTime());
 
         //Добовляем новую сабку
-        int subtask2ID = manager.addSubTask(new Subtask("Subtask1", "DONE",
-                TaskStatus.DONE, epicID, durationSubtask1, timeSubtask1));
-
+        Subtask subtask2 = manager.addSubTask(new Subtask("Subtask1", "DONE",
+                TaskStatus.DONE, epic0.getId(), durationSubtask1, timeSubtask1));
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask2ID).getEndTime());
+        assertEquals(manager.searchTask(epic0.getId()).getEndTime(),
+                manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(epicID).getTaskStatus(), TaskStatus.IN_PROGRESS);
+        assertEquals(manager.searchTask(epic0.getId()).getTaskStatus(), TaskStatus.IN_PROGRESS);
 
         // Обновляем сабку со статусом нью на доне
-        int newSubtask1ID = manager.updSubTask(new Subtask(subtask1ID, "Subtask", "DONE",
-                TaskStatus.DONE, epicID, durationSubtask, timeSubtask));
+        Subtask subtask = manager.updSubTask(new Subtask(subtask1.getId(), "Subtask", "DONE",
+                TaskStatus.DONE, epic0.getId(), durationSubtask, timeSubtask));
 
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask2ID).getEndTime());
+        assertEquals(manager.searchTask(epic0.getId()).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(epicID).getTaskStatus(), TaskStatus.DONE);
+        assertEquals(manager.searchTask(epic0.getId()).getTaskStatus(), TaskStatus.DONE);
 
         // Меняем статусы сабок на ИН ПРОГРЕСС
-        int newInProgressSub1 = manager.updSubTask(new Subtask(subtask1ID, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, epicID, durationSubtask, timeSubtask));
-        int newInProgressSub2 = manager.updSubTask(new Subtask(subtask2ID, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, epicID, durationSubtask1, timeSubtask1));
+        manager.updSubTask(new Subtask(1, "Subtask", "DONE",
+                TaskStatus.IN_PROGRESS, 0, durationSubtask, timeSubtask));
+        manager.updSubTask(new Subtask(2, "Subtask", "DONE",
+                TaskStatus.IN_PROGRESS, 0, durationSubtask1, timeSubtask1));
 
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask2ID).getEndTime());
+        assertEquals(manager.searchTask(0).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(epicID).getTaskStatus(), TaskStatus.IN_PROGRESS);
+        assertEquals(manager.searchTask(0).getTaskStatus(), TaskStatus.IN_PROGRESS);
     }
 
     @Test
@@ -78,44 +75,44 @@ public class NewTest {
         Duration durationSubtask1 = Duration.ofMinutes(60);
 
         // Создаем епик с таской
-        int epicID = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, timeEpic));
-        int subtask1ID = manager.addSubTask(new Subtask("Subtask", "new",
-                TaskStatus.NEW, epicID, durationSubtask, timeSubtask));
-
+        Epic epic0 = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, timeEpic));
+        Subtask subtask1 = manager.addSubTask(new Subtask("Subtask", "new",
+                TaskStatus.NEW, epic0.getId(), durationSubtask, timeSubtask));
         // проверяем, что ендтайм сабки равен енд тайму епика, в который она входит
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask1ID).getEndTime());
+        assertEquals(manager.searchTask(epic0.getId()).getEndTime(),subtask1.getEndTime());
 
         //Добовляем новую сабку
-        int subtask2ID = manager.addSubTask(new Subtask("Subtask1", "DONE",
-                TaskStatus.DONE, epicID, durationSubtask1, timeSubtask1));
-
+        Subtask subtask2 = manager.addSubTask(new Subtask("Subtask1", "DONE",
+                TaskStatus.DONE, epic0.getId(), durationSubtask1, timeSubtask1));
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask2ID).getEndTime());
+        assertEquals(manager.searchTask(epic0.getId()).getEndTime(),
+                manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(epicID).getTaskStatus(), TaskStatus.IN_PROGRESS);
+        assertEquals(manager.searchTask(epic0.getId()).getTaskStatus(), TaskStatus.IN_PROGRESS);
 
         // Обновляем сабку со статусом нью на доне
-        int newSubtask1ID = manager.updSubTask(new Subtask(subtask1ID, "Subtask", "DONE",
-                TaskStatus.DONE, epicID, durationSubtask, timeSubtask));
+        Subtask subtask = manager.updSubTask(new Subtask(subtask1.getId(), "Subtask", "DONE",
+                TaskStatus.DONE, epic0.getId(), durationSubtask, timeSubtask));
+
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask2ID).getEndTime());
+        assertEquals(manager.searchTask(epic0.getId()).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(epicID).getTaskStatus(), TaskStatus.DONE);
+        assertEquals(manager.searchTask(epic0.getId()).getTaskStatus(), TaskStatus.DONE);
 
         // Меняем статусы сабок на ИН ПРОГРЕСС
-        int newInProgressSub1 = manager.updSubTask(new Subtask(subtask1ID, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, epicID, durationSubtask, timeSubtask));
-        int newInProgressSub2 = manager.updSubTask(new Subtask(subtask2ID, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, epicID, durationSubtask1, timeSubtask1));
+        manager.updSubTask(new Subtask(1, "Subtask", "DONE",
+                TaskStatus.IN_PROGRESS, 0, durationSubtask, timeSubtask));
+        manager.updSubTask(new Subtask(2, "Subtask", "DONE",
+                TaskStatus.IN_PROGRESS, 0, durationSubtask1, timeSubtask1));
 
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(epicID).getEndTime(), manager.searchTask(subtask2ID).getEndTime());
+        assertEquals(manager.searchTask(0).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(epicID).getTaskStatus(), TaskStatus.IN_PROGRESS);
+        assertEquals(manager.searchTask(0).getTaskStatus(), TaskStatus.IN_PROGRESS);
     }
 
     @Test
-    public void fileIntersectionTest() throws IOException {
+     public void fileIntersectionTest() throws IOException {
         FileBackedTaskManager manager = Managers.getDefaultFile();
 
         LocalDateTime startTask1 = LocalDateTime.of(2023, 1, 1, 0, 0);
@@ -129,27 +126,27 @@ public class NewTest {
         Duration durationTask2 = Duration.ofMinutes(60);
 
         // попробуем создать 2 таска друг за другом по дате
-        int idTask1 = manager.addTask(new Task("Task1",
+        Task task1 = manager.addTask(new Task("Task1",
                 "new", TaskStatus.NEW, durationTask1, startTask1));
-        int idTask2 = manager.addTask(new Task("Task2",
-                "new", TaskStatus.NEW, durationTask2, startTask2));
-        assertEquals(idTask2, -1);
+        Task task2 = new Task("Task2",
+                "new", TaskStatus.NEW, durationTask2, startTask2);
+        assertNull(manager.addTask(task2));
 
         // создаем 2 сабки от 1 епика в +- одно время
-        int epicId = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
-        int subId1 = manager.addSubTask(new Subtask("SubTask1",
-                "new", TaskStatus.NEW, epicId, durationTask1, subStart));
-        int subId2 = manager.addSubTask(new Subtask("SubTask2",
-                "new", TaskStatus.NEW, epicId, durationTask2, subStart2));
-        assertEquals(subId2, -1);
+        Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
+        Subtask subtask1 = manager.addSubTask(new Subtask("SubTask1",
+                "new", TaskStatus.NEW, epic.getId(), durationTask1, subStart));
+        Subtask subtask2 = new Subtask("SubTask2",
+                "new", TaskStatus.NEW, epic.getId(), durationTask2, subStart2);
+        assertNull(manager.addSubTask(subtask2));
 
         // создаем 1 эпик на границе с другим
-        int epicId2 = manager.addEpic(new Epic("Epic2", "new", TaskStatus.NEW, epicStart2));
-        int subId3 = manager.addSubTask(new Subtask("SubTask3",
-                "new", TaskStatus.NEW, epicId2, durationTask2, subStart3));
+        Epic epic2 = manager.addEpic(new Epic("Корявый", "new", TaskStatus.NEW, epicStart2));
+        Subtask subtask3 = new Subtask("SubTask3",
+                "new", TaskStatus.NEW, epic2.getId(), durationTask2, subStart3);
         // В таком формате сабтаска не должна создаваться, потому что эпик начнет перекрывать другой эпик.
         // Тут нужно только менять дату 2 эпика
-        assertEquals(subId3, -1);
+        assertNull(manager.addSubTask(subtask3));
     }
 
     @Test
@@ -167,66 +164,67 @@ public class NewTest {
         Duration durationTask2 = Duration.ofMinutes(60);
 
         // попробуем создать 2 таска друг за другом по дате
-        int idTask1 = manager.addTask(new Task("Task1",
+        Task task1 = manager.addTask(new Task("Task1",
                 "new", TaskStatus.NEW, durationTask1, startTask1));
-        int idTask2 = manager.addTask(new Task("Task2",
-                "new", TaskStatus.NEW, durationTask2, startTask2));
-        assertEquals(idTask2, -1);
+        Task task2 = new Task("Task2",
+                "new", TaskStatus.NEW, durationTask2, startTask2);
+        assertNull(manager.addTask(task2));
 
         // создаем 2 сабки от 1 епика в +- одно время
-        int epicId = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
-        int subId1 = manager.addSubTask(new Subtask("SubTask1",
-                "new", TaskStatus.NEW, epicId, durationTask1, subStart));
-        int subId2 = manager.addSubTask(new Subtask("SubTask2",
-                "new", TaskStatus.NEW, epicId, durationTask2, subStart2));
-        assertEquals(subId2, -1);
+        Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
+        Subtask subtask1 = manager.addSubTask(new Subtask("SubTask1",
+                "new", TaskStatus.NEW, epic.getId(), durationTask1, subStart));
+        Subtask subtask2 = new Subtask("SubTask2",
+                "new", TaskStatus.NEW, epic.getId(), durationTask2, subStart2);
+        assertNull(manager.addSubTask(subtask2));
 
         // создаем 1 эпик на границе с другим
-        int epicId2 = manager.addEpic(new Epic("Epic2", "new", TaskStatus.NEW, epicStart2));
-        int subId3 = manager.addSubTask(new Subtask("SubTask3",
-                "new", TaskStatus.NEW, epicId2, durationTask2, subStart3));
+        Epic epic2 = manager.addEpic(new Epic("Корявый", "new", TaskStatus.NEW, epicStart2));
+        Subtask subtask3 = new Subtask("SubTask3",
+                "new", TaskStatus.NEW, epic2.getId(), durationTask2, subStart3);
         // В таком формате сабтаска не должна создаваться, потому что эпик начнет перекрывать другой эпик.
         // Тут нужно только менять дату 2 эпика
-        assertEquals(subId3, -1);
+        assertNull(manager.addSubTask(subtask3));
     }
 
     @Test
     public void emptyAndDoubleHistoryCheck() throws IOException {
         LocalDateTime startTask1 = LocalDateTime.of(2023, 1, 1, 0, 0);
         LocalDateTime startTask2 = LocalDateTime.of(2024, 1, 1, 0, 1);
+        LocalDateTime startTask01 = LocalDateTime.of(2021, 1, 1, 0, 0);
+        LocalDateTime startTask02 = LocalDateTime.of(2022, 1, 1, 0, 1);
         Duration durationTask1 = Duration.ofMinutes(90);
         Duration durationTask2 = Duration.ofMinutes(60);
 
         FileBackedTaskManager manager = Managers.getDefaultFile();
         assertTrue(manager.getHistory().isEmpty());
 
-        int task = manager.addTask(new Task("Task", "123",
+        Task task = manager.addTask(new Task("Task", "123",
                 TaskStatus.NEW, durationTask1, startTask1));
-        int task2 = manager.addTask(new Task("Tusk", "321",
+        Task task1 = manager.addTask(new Task("Task1", "321",
                 TaskStatus.NEW, durationTask2, startTask2));
-        manager.searchTask(task);
-        manager.searchTask(task);
-        manager.searchTask(task2);
+        manager.searchTask(task.getId());
+        manager.searchTask(task.getId());
+        manager.searchTask(task1.getId());
         List<Task> history = manager.getHistory();
         assertEquals(history.size(), 2);
-        assertEquals(history.get(0), manager.searchTask(task));
-        assertEquals(history.get(1), manager.searchTask(task2));
+        assertEquals(history.get(0), manager.searchTask(task.getId()));
+        assertEquals(history.get(1), manager.searchTask(task1.getId()));
 
         InMemoryTaskManager manager2 = Managers.getDefault();
         assertTrue(manager2.getHistory().isEmpty());
 
-        int task21 = manager2.addTask(new Task("Task", "123",
-                TaskStatus.NEW, durationTask1, startTask1));
-        int task22 = manager2.addTask(new Task("Tusk", "321",
-                TaskStatus.NEW, durationTask2, startTask2));
-        manager2.searchTask(task);
-        manager2.searchTask(task);
-        manager2.searchTask(task2);
-        List<Task> history2 = manager2.getHistory();
-        assertEquals(history2.size(), 2);
-        assertEquals(history.get(0), manager2.searchTask(task21));
-        assertEquals(history.get(1), manager2.searchTask(task22));
-
+        Task task0 = manager2.addTask(new Task("Task", "123",
+                TaskStatus.NEW, durationTask1, startTask01));
+        Task task01 = manager2.addTask(new Task("Task1", "321",
+                TaskStatus.NEW, durationTask2, startTask02));
+        manager2.searchTask(task0.getId());
+        manager2.searchTask(task0.getId());
+        manager2.searchTask(task01.getId());
+        List<Task> history0 = manager2.getHistory();
+        assertEquals(history.size(), 2);
+        assertEquals(history0.get(0), manager2.searchTask(task0.getId()));
+        assertEquals(history0.get(1), manager2.searchTask(task01.getId()));
     }
 
 
@@ -243,49 +241,52 @@ public class NewTest {
         assertTrue(manager.getHistory().isEmpty());
 
         // проверяем на дублирование
-        int task = manager.addTask(new Task("Task1", "123",
+        Task task1 = manager.addTask(new Task("Task1", "123",
                 TaskStatus.NEW, durationTask1, startTask1));
-        int task2 = manager.addTask(new Task("Tusk2", "321",
+        Task task2 = manager.addTask(new Task("Tusk2", "321",
                 TaskStatus.NEW, durationTask2, startTask2));
-        int task3 = manager.addTask(new Task("Tusk3", "321",
+        Task task3 = manager.addTask(new Task("Tusk3", "321",
                 TaskStatus.NEW, durationTask3, startTask3));
-        manager.searchTask(task);
-        manager.searchTask(task2);
-        manager.searchTask(task3);
+
+        manager.searchTask(task1.getId());
+        manager.searchTask(task2.getId());
+        manager.searchTask(task3.getId());
         List<Task> history = manager.getHistory();
         assertEquals(history.size(), 3);
 
         // Удаляем 1 таск
-        manager.deleteTask(task);
+        manager.deleteTask(task1.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 2);
-        assertEquals(history.get(0), manager.searchTask(task2));
-        assertEquals(history.get(1), manager.searchTask(task3));
+        assertEquals(history.get(0), manager.searchTask(task2.getId()));
+        assertEquals(history.get(1), manager.searchTask(task3.getId()));
 
-        int newTask = manager.addTask(new Task("Task1", "123",
+        Task newTask = manager.addTask(new Task("Task1", "123",
                 TaskStatus.NEW, durationTask1, startTask1));
-        manager.searchTask(newTask);
+
+        manager.searchTask(newTask.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 3);
 
         // Удаляем 2 таск
-        manager.deleteTask(task3);
+        manager.deleteTask(task3.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 2);
-        assertEquals(history.get(0), manager.searchTask(task2));
-        assertEquals(history.get(1), manager.searchTask(newTask));
+        assertEquals(history.get(0), manager.searchTask(task2.getId()));
+        assertEquals(history.get(1), manager.searchTask(newTask.getId()));
 
-        int againNewTask = manager.addTask(new Task("Tusk3", "321",
+        Task againNewTask = manager.addTask(new Task("Tusk3", "321",
                 TaskStatus.NEW, durationTask3, startTask3));
-        manager.searchTask(againNewTask);
+
+        manager.searchTask(againNewTask.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 3);
 
         // Удаляем 3 таск
-        manager.deleteTask(againNewTask);
+        manager.deleteTask(againNewTask.getId());
         history = manager.getHistory();
-        assertEquals(history.get(0), manager.searchTask(task2));
-        assertEquals(history.get(1), manager.searchTask(newTask));
+        assertEquals(history.get(0), manager.searchTask(task2.getId()));
+        assertEquals(history.get(1), manager.searchTask(newTask.getId()));
     }
 
     @Test
@@ -301,49 +302,52 @@ public class NewTest {
         assertTrue(manager.getHistory().isEmpty());
 
         // проверяем на дублирование
-        int task = manager.addTask(new Task("Task1", "123",
+        Task task1 = manager.addTask(new Task("Task1", "123",
                 TaskStatus.NEW, durationTask1, startTask1));
-        int task2 = manager.addTask(new Task("Tusk2", "321",
+        Task task2 = manager.addTask(new Task("Tusk2", "321",
                 TaskStatus.NEW, durationTask2, startTask2));
-        int task3 = manager.addTask(new Task("Tusk3", "321",
+        Task task3 = manager.addTask(new Task("Tusk3", "321",
                 TaskStatus.NEW, durationTask3, startTask3));
-        manager.searchTask(task);
-        manager.searchTask(task2);
-        manager.searchTask(task3);
+
+        manager.searchTask(task1.getId());
+        manager.searchTask(task2.getId());
+        manager.searchTask(task3.getId());
         List<Task> history = manager.getHistory();
         assertEquals(history.size(), 3);
 
         // Удаляем 1 таск
-        manager.deleteTask(task);
+        manager.deleteTask(task1.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 2);
-        assertEquals(history.get(0), manager.searchTask(task2));
-        assertEquals(history.get(1), manager.searchTask(task3));
+        assertEquals(history.get(0), manager.searchTask(task2.getId()));
+        assertEquals(history.get(1), manager.searchTask(task3.getId()));
 
-        int newTask = manager.addTask(new Task("Task1", "123",
+        Task newTask = manager.addTask(new Task("Task1", "123",
                 TaskStatus.NEW, durationTask1, startTask1));
-        manager.searchTask(newTask);
+
+        manager.searchTask(newTask.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 3);
 
         // Удаляем 2 таск
-        manager.deleteTask(task3);
+        manager.deleteTask(task3.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 2);
-        assertEquals(history.get(0), manager.searchTask(task2));
-        assertEquals(history.get(1), manager.searchTask(newTask));
+        assertEquals(history.get(0), manager.searchTask(task2.getId()));
+        assertEquals(history.get(1), manager.searchTask(newTask.getId()));
 
-        int againNewTask = manager.addTask(new Task("Tusk3", "321",
+        Task againNewTask = manager.addTask(new Task("Tusk3", "321",
                 TaskStatus.NEW, durationTask3, startTask3));
-        manager.searchTask(againNewTask);
+
+        manager.searchTask(againNewTask.getId());
         history = manager.getHistory();
         assertEquals(history.size(), 3);
 
         // Удаляем 3 таск
-        manager.deleteTask(againNewTask);
+        manager.deleteTask(againNewTask.getId());
         history = manager.getHistory();
-        assertEquals(history.get(0), manager.searchTask(task2));
-        assertEquals(history.get(1), manager.searchTask(newTask));
+        assertEquals(history.get(0), manager.searchTask(task2.getId()));
+        assertEquals(history.get(1), manager.searchTask(newTask.getId()));
     }
 
     @Test
@@ -353,8 +357,9 @@ public class NewTest {
         assertThrows(ManagerSaveException.class, () -> {
             LocalDateTime startTask1 = LocalDateTime.of(2023, 1, 1, 0, 0);
             Duration durationTask1 = Duration.ofMinutes(90);
-            int task = manager.addTask(new Task("Task1", "123",
-                    TaskStatus.NEW, durationTask1, startTask1));
+            Task task = new Task("Task1", "123",
+                    TaskStatus.NEW, durationTask1, startTask1);
+            manager.addTask(task);
         });
     }
 }

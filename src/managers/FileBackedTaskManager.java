@@ -63,30 +63,34 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             manager.tasks.put(task.getId(), task);
                             if (task.getStartTime() != null) {
                                 if (manager.timeCheck(task)) {
-                                    manager.prioritizedCheck(task.getId());
+                                    manager.addToPrioritizedList(task.getId());
                                 }
                             }
                             break;
                         case "Epic":
                             Epic epic = (Epic) csv.fromString(row);
+                            for (Subtask subtask : manager.getSubTasks()) {
+                                if (subtask.getEpicId() == epic.getId()) {
+                                    epic.addToSubList(subtask);
+                                }
+                            }
                             manager.epics.put(epic.getId(), epic);
                             if (epic.getStartTime() != null) {
                                 if (manager.timeCheckEpic(epic)) {
-                                    manager.prioritizedCheck(epic.getId());
+                                    manager.addToPrioritizedList(epic.getId());
                                 }
                             }
                             break;
                         case "Subtask":
                             Subtask subtask = (Subtask) csv.fromString(row);
-                            int epicId = subtask.getEpicId();
-                            if (manager.epics.containsKey(epicId)) {
-                                Epic epic2 = manager.epics.get(epicId);
+                            Epic motherEpic = (Epic) manager.getTask(subtask.getEpicId());
+                            if (motherEpic != null) {
+                                motherEpic.addToSubList(subtask);
                                 manager.subTasks.put(subtask.getId(), subtask);
-                                manager.checkEpic(epic2);
-                                if (subtask.getStartTime() != null) {
-                                    if (manager.timeCheck(subtask)) {
-                                        manager.prioritizedCheck(subtask.getId());
-                                    }
+                            }
+                            if (subtask.getStartTime() != null) {
+                                if (manager.timeCheck(subtask)) {
+                                    manager.addToPrioritizedList(subtask.getId());
                                 }
                             }
                             break;
@@ -110,17 +114,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     @Override
-    public int addTask(Task task) {
-        int trueNumber = super.addTask(task);
+    public Task addTask(Task task) {
+        Task addTask = super.addTask(task);
         save();
-        return trueNumber;
+        return addTask;
     }
 
     @Override
-    public int addEpic(Epic epic) {
-        int trueNumber = super.addEpic(epic);
+    public Epic addEpic(Epic epic) {
+        Epic addEpic = super.addEpic(epic);
         save();
-        return trueNumber;
+        return addEpic;
     }
 
     @Override
@@ -129,10 +133,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public int addSubTask(Subtask subtask) {
-        int trueNumber = super.addSubTask(subtask);
+    public Subtask addSubTask(Subtask subtask) {
+        Subtask addSubTask = super.addSubTask(subtask);
         save();
-        return trueNumber;
+        return addSubTask;
     }
 
     @Override
@@ -146,24 +150,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public int updTask(Task task) {
-        int newId = super.updTask(task);
+    public Task updTask(Task task) {
+        Task updTask = super.updTask(task);
         save();
-        return newId;
+        return updTask;
     }
 
     @Override
-    public int updEpic(Epic epic) {
-        int newId = super.updEpic(epic);
+    public Epic updEpic(Epic epic) {
+        Epic updEpic = super.updEpic(epic);
         save();
-        return newId;
+        return updEpic;
     }
 
     @Override
-    public int updSubTask(Subtask subtask) {
-        int trueNumber = super.updSubTask(subtask);
+    public Subtask updSubTask(Subtask subtask) {
+        Subtask updSubTask = super.updSubTask(subtask);
         save();
-        return trueNumber;
+        return updSubTask;
     }
 
     @Override

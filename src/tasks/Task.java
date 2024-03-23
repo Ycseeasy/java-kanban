@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
-    private long duration;
-    private LocalDateTime startTime;
-    private int id;
+    private final int id;
     private final String name;
     private final String description;
     private final TaskStatus taskStatus;
-    private LocalDateTime endTime;
+    private final long duration;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
 
     public Task(String name, String description, TaskStatus taskStatus, Duration duration) {
         this.duration = duration.toMinutes();
@@ -19,6 +19,9 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
         // Для создания Таска/Сабки в мейне без стартайма
+        startTime = null;
+        endTime = null;
+        id = 0;
     }
 
     public Task(String name, String description, TaskStatus taskStatus, Duration duration, LocalDateTime startTime) {
@@ -29,6 +32,7 @@ public class Task {
         this.taskStatus = taskStatus;
         this.endTime = startTime.plus(duration);
         // Для создания Таска/Сабки в мейне
+        id = 0;
     }
 
     public Task(int id, String name, String description, TaskStatus taskStatus, Duration duration) {
@@ -38,6 +42,8 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
         // Для создания Таска/Сабки в InMemoryTaskManager без стартайма
+        startTime = null;
+        endTime = null;
     }
 
     public Task(int id, String name, String description,
@@ -58,6 +64,9 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
         // Для создание Епика в мейне
+        duration = 0;
+        endTime = null;
+        id = 0;
     }
 
     public Task(String name, String description, TaskStatus taskStatus) {
@@ -65,6 +74,10 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
         // Для создание Епика в мейне без стартайма
+        duration = 0;
+        startTime = null;
+        endTime = null;
+        id = 0;
     }
 
     public Task(int id, String name, String description, TaskStatus taskStatus, LocalDateTime startTime) {
@@ -74,6 +87,8 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
         // Для создания Епика в InMemoryTaskManager
+        duration = 0;
+        endTime = null;
     }
 
     public Task(int id, String name, String description, TaskStatus taskStatus) {
@@ -82,6 +97,9 @@ public class Task {
         this.description = description;
         this.taskStatus = taskStatus;
         // Для создания Епика в InMemoryTaskManager без стартайма
+        duration = 0;
+        startTime = null;
+        endTime = null;
     }
 
     public Task(int id, String name, String description,
@@ -99,10 +117,6 @@ public class Task {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public TaskStatus getTaskStatus() {

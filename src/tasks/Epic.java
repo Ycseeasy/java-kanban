@@ -2,8 +2,13 @@ package tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
+
+    private final List<Subtask> epicsSubtask = new ArrayList<>();
+
 
     public Epic(String name, String description, TaskStatus taskStatus) {
         super(name, description, taskStatus);
@@ -27,22 +32,35 @@ public class Epic extends Task {
         // Конструктор для создания из InMemoryTaskManager без стартайма + для апдейта
     }
 
-    public Epic(int id, String name, String description,
-                TaskStatus taskStatus, Duration duration, LocalDateTime startTime, LocalDateTime endTime) {
+    public Epic(int id, String name, String description, TaskStatus taskStatus,
+                Duration duration, LocalDateTime startTime, LocalDateTime endTime) {
         super(id, name, description, taskStatus, duration, startTime, endTime);
         // Конструктор для создания из checkEpic()
     }
 
     @Override
     public String toString() {
-        return "Tasks.Task{" +
-                "id=" + getId() +
+        return "Epic{" +
+                "id=" + super.getId() +
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", taskStatus=" + getTaskStatus() +
                 ", startTime=" + getStartTime() +
                 ", duration=" + getDuration() +
                 ", endTime=" + getEndTime() +
+                ", size=" + getEpicsSubtask().size() +
                 '}';
+    }
+
+    public List<Subtask> getEpicsSubtask() {
+        return epicsSubtask;
+    }
+
+    public void addToSubList(Subtask subtask) {
+        epicsSubtask.add(subtask);
+    }
+
+    public void removeFromList(Subtask subtask) {
+        epicsSubtask.remove(subtask);
     }
 }

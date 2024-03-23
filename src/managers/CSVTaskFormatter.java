@@ -31,6 +31,7 @@ public class CSVTaskFormatter {
                 type = null;
                 break;
         }
+        LocalDateTime endTime = task.getEndTime();
         String name = task.getName();
         String taskStatus = task.getTaskStatus().toString();
         String description = task.getDescription();
@@ -55,13 +56,11 @@ public class CSVTaskFormatter {
         sb.append(startTimeS);
         sb.append(",");
 
-        if (task.getClass() == Epic.class) {
-            LocalDateTime endTime = task.getEndTime();
-            if (endTime != null) {
-                String endTimeS = endTime.format(formatter);
-                sb.append(endTimeS);
-            }
+        if (endTime != null) {
+            String endTimeS = endTime.format(formatter);
+            sb.append(endTimeS);
         }
+
         if (task.getClass() == Subtask.class) {
             int epicId = ((Subtask) task).getEpicId();
             sb.append(epicId);

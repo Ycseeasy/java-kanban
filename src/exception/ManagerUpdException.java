@@ -1,11 +1,9 @@
-
 package exception;
 
-public class ManagerSaveException extends RuntimeException {
-
+public class ManagerUpdException extends RuntimeException {
     private final String textError;
 
-    public ManagerSaveException(String textError) {
+    public ManagerUpdException(String textError) {
         this.textError = textError;
     }
 
