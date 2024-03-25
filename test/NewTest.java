@@ -1,12 +1,14 @@
-import org.junit.jupiter.api.Test;
+import exception.ManagerAddException;
+import exception.ManagerSaveException;
+import exception.ManagerUpdException;
 import managers.FileBackedTaskManager;
-import managers.InMemoryTaskManager;
 import managers.Managers;
+import managers.TaskManager;
+import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
-import exception.ManagerSaveException;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class NewTest {
     @Test
     public void fileManagerEpicsCheck() throws IOException {
-        FileBackedTaskManager manager = Managers.getDefaultFile();
+        TaskManager manager = Managers.getDefaultFile();
         // Дата + дюрейшон для новых епиков и тасков
         LocalDateTime timeEpic = LocalDateTime.of(2023, 1, 1, 0, 0);
         LocalDateTime timeSubtask = LocalDateTime.of(2023, 1, 1, 13, 0);
@@ -66,7 +68,7 @@ public class NewTest {
 
     @Test
     public void InMemoryManagerEpicsCheck() throws IOException {
-        InMemoryTaskManager manager = Managers.getDefault();
+        TaskManager manager = Managers.getDefault();
         // Дата + дюрейшон для новых епиков и тасков
         LocalDateTime timeEpic = LocalDateTime.of(2023, 1, 1, 0, 0);
         LocalDateTime timeSubtask = LocalDateTime.of(2023, 1, 1, 13, 0);
@@ -113,7 +115,7 @@ public class NewTest {
 
     @Test
      public void fileIntersectionTest() throws IOException {
-        FileBackedTaskManager manager = Managers.getDefaultFile();
+        TaskManager manager = Managers.getDefaultFile();
 
         LocalDateTime startTask1 = LocalDateTime.of(2023, 1, 1, 0, 0);
         LocalDateTime startTask2 = LocalDateTime.of(2023, 1, 1, 0, 1);
@@ -130,7 +132,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, durationTask1, startTask1));
         Task task2 = new Task("Task2",
                 "new", TaskStatus.NEW, durationTask2, startTask2);
-        assertNull(manager.addTask(task2));
+        assertThrows(ManagerAddException.class, () -> manager.addTask(task2));
 
         // создаем 2 сабки от 1 епика в +- одно время
         Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
@@ -138,7 +140,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic.getId(), durationTask1, subStart));
         Subtask subtask2 = new Subtask("SubTask2",
                 "new", TaskStatus.NEW, epic.getId(), durationTask2, subStart2);
-        assertNull(manager.addSubTask(subtask2));
+        assertThrows(ManagerAddException.class, () -> manager.addSubTask(subtask2));
 
         // создаем 1 эпик на границе с другим
         Epic epic2 = manager.addEpic(new Epic("Корявый", "new", TaskStatus.NEW, epicStart2));
@@ -146,12 +148,12 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic2.getId(), durationTask2, subStart3);
         // В таком формате сабтаска не должна создаваться, потому что эпик начнет перекрывать другой эпик.
         // Тут нужно только менять дату 2 эпика
-        assertNull(manager.addSubTask(subtask3));
+        assertThrows(ManagerUpdException.class, () -> manager.addSubTask(subtask3));
     }
 
     @Test
     public void IntersectionTest() {
-        InMemoryTaskManager manager = Managers.getDefault();
+        TaskManager manager = Managers.getDefault();
 
         LocalDateTime startTask1 = LocalDateTime.of(2023, 1, 1, 0, 0);
         LocalDateTime startTask2 = LocalDateTime.of(2023, 1, 1, 0, 1);
@@ -168,7 +170,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, durationTask1, startTask1));
         Task task2 = new Task("Task2",
                 "new", TaskStatus.NEW, durationTask2, startTask2);
-        assertNull(manager.addTask(task2));
+        assertThrows(ManagerAddException.class, () -> manager.addTask(task2));
 
         // создаем 2 сабки от 1 епика в +- одно время
         Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
@@ -176,7 +178,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic.getId(), durationTask1, subStart));
         Subtask subtask2 = new Subtask("SubTask2",
                 "new", TaskStatus.NEW, epic.getId(), durationTask2, subStart2);
-        assertNull(manager.addSubTask(subtask2));
+        assertThrows(ManagerAddException.class, () -> manager.addSubTask(subtask2));
 
         // создаем 1 эпик на границе с другим
         Epic epic2 = manager.addEpic(new Epic("Корявый", "new", TaskStatus.NEW, epicStart2));
@@ -184,7 +186,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic2.getId(), durationTask2, subStart3);
         // В таком формате сабтаска не должна создаваться, потому что эпик начнет перекрывать другой эпик.
         // Тут нужно только менять дату 2 эпика
-        assertNull(manager.addSubTask(subtask3));
+        assertThrows(ManagerUpdException.class, () -> manager.addSubTask(subtask3));
     }
 
     @Test
@@ -196,7 +198,7 @@ public class NewTest {
         Duration durationTask1 = Duration.ofMinutes(90);
         Duration durationTask2 = Duration.ofMinutes(60);
 
-        FileBackedTaskManager manager = Managers.getDefaultFile();
+        TaskManager manager = Managers.getDefaultFile();
         assertTrue(manager.getHistory().isEmpty());
 
         Task task = manager.addTask(new Task("Task", "123",
@@ -211,7 +213,7 @@ public class NewTest {
         assertEquals(history.get(0), manager.searchTask(task.getId()));
         assertEquals(history.get(1), manager.searchTask(task1.getId()));
 
-        InMemoryTaskManager manager2 = Managers.getDefault();
+        TaskManager manager2 = Managers.getDefault();
         assertTrue(manager2.getHistory().isEmpty());
 
         Task task0 = manager2.addTask(new Task("Task", "123",
@@ -237,7 +239,7 @@ public class NewTest {
         Duration durationTask2 = Duration.ofMinutes(60);
         Duration durationTask3 = Duration.ofMinutes(80);
 
-        InMemoryTaskManager manager = Managers.getDefault();
+        TaskManager manager = Managers.getDefault();
         assertTrue(manager.getHistory().isEmpty());
 
         // проверяем на дублирование
@@ -298,7 +300,7 @@ public class NewTest {
         Duration durationTask2 = Duration.ofMinutes(60);
         Duration durationTask3 = Duration.ofMinutes(80);
 
-        FileBackedTaskManager manager = Managers.getDefaultFile();
+        TaskManager manager = Managers.getDefaultFile();
         assertTrue(manager.getHistory().isEmpty());
 
         // проверяем на дублирование

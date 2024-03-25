@@ -1,6 +1,8 @@
 
 package exception;
 
+import java.util.Arrays;
+
 public class ManagerAddException extends RuntimeException {
 
     private final String textError;
@@ -10,6 +12,6 @@ public class ManagerAddException extends RuntimeException {
     }
 
     public void printTextError() {
-        System.out.println(textError);
+        System.out.println(Arrays.toString(getStackTrace()) + " -> " + textError);
     }
 }
