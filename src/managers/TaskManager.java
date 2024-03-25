@@ -1,4 +1,4 @@
-package taskManagers;
+package managers;
 
 import tasks.Epic;
 import tasks.Subtask;
@@ -21,6 +21,8 @@ public interface TaskManager {
 
     List<Subtask> getSubTasks();
 
+    List<Task> getPrioritizedTasks();
+
     Task updTask(Task task);
 
     Epic updEpic(Epic epic);
@@ -29,13 +31,9 @@ public interface TaskManager {
 
     void removeAll();
 
-    Task getTask(int id);
+    Task searchTask(int id);
 
     void deleteTask(int id);
-
-    void deleteEpic(int id);
-
-    void deleteSubTask(int id);
 
     List<Task> getHistory();
 }
