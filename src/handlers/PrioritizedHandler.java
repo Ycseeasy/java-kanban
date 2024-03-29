@@ -2,7 +2,8 @@ package handlers;
 
 import adapters.DurationAdapter;
 import adapters.LocalDateTimeAdapter;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import managers.TaskManager;
