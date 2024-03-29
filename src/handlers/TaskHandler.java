@@ -120,6 +120,7 @@ public class TaskHandler implements HttpHandler {
         }
         exchange.close();
     }
+
     private Endpoint getEndpoint(String requestPath, String requestMethod) {
         String[] pathParts = requestPath.split("/");
 
