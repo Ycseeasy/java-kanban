@@ -5,24 +5,16 @@ import adapters.LocalDateTimeAdapter;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import enums.Endpoint;
-import exception.ManagerAddException;
-import exception.ManagerDeleteException;
-import exception.ManagerIntersectionTimeException;
-import exception.ManagerUpdException;
 import managers.TaskManager;
-import tasks.Subtask;
 import tasks.Task;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 public class PrioritizedHandler implements HttpHandler {
 
