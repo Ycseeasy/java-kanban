@@ -1,5 +1,7 @@
 package tasks;
 
+import enums.TaskStatus;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,7 +59,9 @@ public class Epic extends Task {
     }
 
     public void addToSubList(Subtask subtask) {
-        epicsSubtask.add(subtask);
+        if (!epicsSubtask.contains(subtask)) {
+            epicsSubtask.add(subtask);
+        }
     }
 
     public void removeFromList(Subtask subtask) {
