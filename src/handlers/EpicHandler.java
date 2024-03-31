@@ -43,6 +43,7 @@ public class EpicHandler implements HttpHandler {
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .create();
+
         switch (endpoint) {
             case EPIC_GET_FULL_LIST:
                 List<Epic> epicList = manager.getEpics();
@@ -51,19 +52,19 @@ public class EpicHandler implements HttpHandler {
                 break;
             case EPIC_CREATE:
                 epic = gson.fromJson(body, Epic.class);
-                    manager.addEpic(epic);
-                    writeResponse(exchange, "Задача успешно добавлена", 201);
-                    break;
+                manager.addEpic(epic);
+                responseCode(exchange);
+                break;
             case EPIC_DELETE:
                 requestPath = exchange.getRequestURI().getPath();
                 pathParts = requestPath.split("/");
                 try {
                     manager.deleteTask(Integer.parseInt(pathParts[2]));
-                    writeResponse(exchange, "Задача успешно удалена",
-                            200);
+                    responseCode(exchange);
                     break;
                 } catch (ManagerDeleteException e) {
-                    writeResponse(exchange, "Задача для удаления не найдена",
+                    String error = gson.toJson("Задача для удаления не найдена");
+                    writeResponse(exchange, error,
                             404);
                     break;
                 }
@@ -71,9 +72,9 @@ public class EpicHandler implements HttpHandler {
                 requestPath = exchange.getRequestURI().getPath();
                 pathParts = requestPath.split("/");
                 Epic searchedEpic = (Epic) manager.searchTask(Integer.parseInt(pathParts[2]));
-                if (searchedEpic == null || searchedEpic.getEndTime() == null) {
-                    writeResponse(exchange,
-                            "Задача не найдена", 404);
+                if (searchedEpic == null) {
+                    String error = gson.toJson("Задача не найдена");
+                    writeResponse(exchange, error, 404);
                     break;
                 }
                 String jsonTask = gson.toJson(searchedEpic);
@@ -88,13 +89,13 @@ public class EpicHandler implements HttpHandler {
                     writeResponse(exchange, jsonListSub, 200);
                     break;
                 } catch (ManagerEpicSubtaskListException e) {
-                    writeResponse(exchange,
-                            "Задача не найдена", 404);
+                    String error = gson.toJson("Задача не найдена");
+                    writeResponse(exchange, error, 404);
                     break;
                 }
             case UNKNOWN:
-                writeResponse(exchange,
-                        "Эндпоинт был составлен некорректно", 401);
+                String error = gson.toJson("Некорректный эндпойнт");
+                writeResponse(exchange, error, 401);
                 break;
         }
 
@@ -107,6 +108,11 @@ public class EpicHandler implements HttpHandler {
             exchange.sendResponseHeaders(responseCode, 0);
             os.write(responseString.getBytes(DEFAULT_CHARSET));
         }
+        exchange.close();
+    }
+
+    private void responseCode(HttpExchange exchange) throws IOException {
+        exchange.sendResponseHeaders(201, 0);
         exchange.close();
     }
 

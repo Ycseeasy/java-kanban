@@ -56,27 +56,29 @@ public class SubtaskHandler implements HttpHandler {
                 if (subtask.getId() > 0) {
                     try {
                         manager.updSubTask(subtask);
-                        writeResponse(exchange, "Подзадача успешно обновлена", 201);
+                        responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        writeResponse(exchange, "Подзадача пересекается с существующими",
-                                406);
+                        String error = gson.toJson("Подзадача пересекается с существующими");
+                        writeResponse(exchange, error, 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        writeResponse(exchange, "Подзадача для обновления не найдена", 404);
+                        String error = gson.toJson("Подзадача для обновления не найдена");
+                        writeResponse(exchange, error, 404);
                         break;
                     }
                 } else {
                     try {
                         manager.addSubTask(subtask);
-                        writeResponse(exchange, "Подзадача успешно добавлена", 201);
+                        responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        writeResponse(exchange, "Подзадача пересекается с существующими",
-                                406);
+                        String error = gson.toJson("Подзадача пересекается с существующими");
+                        writeResponse(exchange, error, 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        writeResponse(exchange, "Произошла ошибка при создании Задачи", 401);
+                        String error = gson.toJson("Произошла ошибка при создании Задачи");
+                        writeResponse(exchange, error, 401);
                         break;
                     }
                 }
@@ -85,12 +87,11 @@ public class SubtaskHandler implements HttpHandler {
                 pathParts = requestPath.split("/");
                 try {
                     manager.deleteTask(Integer.parseInt(pathParts[2]));
-                    writeResponse(exchange, "Подзадача успешно удалена",
-                            200);
+                    responseCode(exchange);
                     break;
                 } catch (ManagerDeleteException e) {
-                    writeResponse(exchange, "Подзадача для удаления не найдена",
-                            404);
+                    String error = gson.toJson("Подзадача для удаления не найдена");
+                    writeResponse(exchange, error, 404);
                     break;
                 }
             case SUBTASK_SEARCH:
@@ -98,16 +99,16 @@ public class SubtaskHandler implements HttpHandler {
                 pathParts = requestPath.split("/");
                 Subtask searchedSubtask = (Subtask) manager.searchTask(Integer.parseInt(pathParts[2]));
                 if (searchedSubtask == null) {
-                    writeResponse(exchange,
-                            "Подзадача не найдена", 404);
+                    String error = gson.toJson("Подзадача не найдена");
+                    writeResponse(exchange, error, 404);
                     break;
                 }
                 String jsonTask = gson.toJson(searchedSubtask);
                 writeResponse(exchange, jsonTask, 200);
                 break;
             case UNKNOWN:
-                writeResponse(exchange,
-                        "Эндпоинт был составлен некорректно", 401);
+                String error = gson.toJson("Некорректный эндпойнт");
+                writeResponse(exchange, error, 401);
                 break;
         }
     }
@@ -119,6 +120,11 @@ public class SubtaskHandler implements HttpHandler {
             exchange.sendResponseHeaders(responseCode, 0);
             os.write(responseString.getBytes(DEFAULT_CHARSET));
         }
+        exchange.close();
+    }
+
+    private void responseCode(HttpExchange exchange) throws IOException {
+        exchange.sendResponseHeaders(201, 0);
         exchange.close();
     }
 

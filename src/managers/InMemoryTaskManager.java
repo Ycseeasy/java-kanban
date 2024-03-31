@@ -307,7 +307,6 @@ public class InMemoryTaskManager implements TaskManager {
                 return lastUpdEpic;
             }
         } catch (ManagerUpdException e) {
-            e.printTextError();
             return null;
         }
     }

@@ -165,7 +165,7 @@ public class ServerTest {
                 .DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(201, response.statusCode());
         List<Task> tasks = manager.getTasks();
         assertEquals(0, tasks.size());
     }
@@ -296,7 +296,7 @@ public class ServerTest {
                 .DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(201, response.statusCode());
         List<Subtask> subtasks = manager.getSubTasks();
         assertEquals(0, subtasks.size());
     }
@@ -425,7 +425,7 @@ public class ServerTest {
                 .DELETE().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+        assertEquals(201, response.statusCode());
         List<Epic> epics = manager.getEpics();
         assertEquals(0, epics.size());
     }
