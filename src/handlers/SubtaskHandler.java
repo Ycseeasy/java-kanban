@@ -59,11 +59,11 @@ public class SubtaskHandler implements HttpHandler {
                         responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        String error = gson.toJson("Подзадача пересекается с существующими");
+                        String error = gson.toJson(new errorMassage("Подзадача пересекается с существующими"));
                         writeResponse(exchange, error, 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        String error = gson.toJson("Подзадача для обновления не найдена");
+                        String error = gson.toJson(new errorMassage("Подзадача для обновления не найдена"));
                         writeResponse(exchange, error, 404);
                         break;
                     }
@@ -73,11 +73,11 @@ public class SubtaskHandler implements HttpHandler {
                         responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        String error = gson.toJson("Подзадача пересекается с существующими");
+                        String error = gson.toJson(new errorMassage("Подзадача пересекается с существующими"));
                         writeResponse(exchange, error, 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        String error = gson.toJson("Произошла ошибка при создании Задачи");
+                        String error = gson.toJson(new errorMassage("Произошла ошибка при создании Задачи"));
                         writeResponse(exchange, error, 401);
                         break;
                     }
@@ -90,7 +90,7 @@ public class SubtaskHandler implements HttpHandler {
                     responseCode(exchange);
                     break;
                 } catch (ManagerDeleteException e) {
-                    String error = gson.toJson("Подзадача для удаления не найдена");
+                    String error = gson.toJson(new errorMassage("Подзадача для удаления не найдена"));
                     writeResponse(exchange, error, 404);
                     break;
                 }
@@ -99,7 +99,7 @@ public class SubtaskHandler implements HttpHandler {
                 pathParts = requestPath.split("/");
                 Subtask searchedSubtask = (Subtask) manager.searchTask(Integer.parseInt(pathParts[2]));
                 if (searchedSubtask == null) {
-                    String error = gson.toJson("Подзадача не найдена");
+                    String error = gson.toJson(new errorMassage("Подзадача не найдена"));
                     writeResponse(exchange, error, 404);
                     break;
                 }
@@ -107,7 +107,7 @@ public class SubtaskHandler implements HttpHandler {
                 writeResponse(exchange, jsonTask, 200);
                 break;
             case UNKNOWN:
-                String error = gson.toJson("Некорректный эндпойнт");
+                String error = gson.toJson(new errorMassage("Некорректный эндпойнт"));
                 writeResponse(exchange, error, 401);
                 break;
         }

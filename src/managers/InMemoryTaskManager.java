@@ -279,7 +279,7 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTime.remove(getTask(id));
             tasks.remove(id);
         } else {
-            throw new ManagerDeleteException("Таск для удаления не найден");
+            throw new ManagerDeleteException("Задача для удаления не найдена");
         }
     }
 
