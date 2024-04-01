@@ -59,12 +59,12 @@ public class TaskHandler implements HttpHandler {
                         responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        String error = gson.toJson(new massage("Задача пересекается с существующими"));
+                        String error = gson.toJson(new Massage("Задача пересекается с существующими"));
                         writeResponse(exchange, error,
                                 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        String error = gson.toJson(new massage("Задача для обновления не найдена"));
+                        String error = gson.toJson(new Massage("Задача для обновления не найдена"));
                         writeResponse(exchange, error, 404);
                         break;
                     }
@@ -74,12 +74,12 @@ public class TaskHandler implements HttpHandler {
                         responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        String error = gson.toJson(new massage("Задача пересекается с существующими"));
+                        String error = gson.toJson(new Massage("Задача пересекается с существующими"));
                         writeResponse(exchange, error,
                                 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        String error = gson.toJson(new massage("Произошла ошибка при создании Задачи"));
+                        String error = gson.toJson(new Massage("Произошла ошибка при создании Задачи"));
                         writeResponse(exchange, error, 401);
                         break;
                     }
@@ -92,7 +92,7 @@ public class TaskHandler implements HttpHandler {
                     responseCode(exchange);
                     break;
                 } catch (ManagerDeleteException e) {
-                    String error = gson.toJson(new massage("Задача для удаления не найдена"));
+                    String error = gson.toJson(new Massage("Задача для удаления не найдена"));
                     writeResponse(exchange, error,
                             404);
                     break;
@@ -102,7 +102,7 @@ public class TaskHandler implements HttpHandler {
                 pathParts = requestPath.split("/");
                 Task searchedTask = manager.searchTask(Integer.parseInt(pathParts[2]));
                 if (searchedTask == null) {
-                    String error = gson.toJson(new massage("Задача не найдена"));
+                    String error = gson.toJson(new Massage("Задача не найдена"));
                     writeResponse(exchange, error, 404);
                     break;
                 }
@@ -110,7 +110,7 @@ public class TaskHandler implements HttpHandler {
                 writeResponse(exchange, jsonTask, 200);
                 break;
             case UNKNOWN:
-                String error = gson.toJson(new massage("Некорректный эндпойнт"));
+                String error = gson.toJson(new Massage("Некорректный эндпойнт"));
                 writeResponse(exchange, error, 401);
                 break;
         }

@@ -63,7 +63,7 @@ public class EpicHandler implements HttpHandler {
                     responseCode(exchange);
                     break;
                 } catch (ManagerDeleteException e) {
-                    String error = gson.toJson(new massage("Задача для удаления не найдена"));
+                    String error = gson.toJson(new Massage("Задача для удаления не найдена"));
                     writeResponse(exchange, error,
                             404);
                     break;
@@ -73,7 +73,7 @@ public class EpicHandler implements HttpHandler {
                 pathParts = requestPath.split("/");
                 Epic searchedEpic = (Epic) manager.searchTask(Integer.parseInt(pathParts[2]));
                 if (searchedEpic == null) {
-                    String error = gson.toJson(new massage("Задача не найдена"));
+                    String error = gson.toJson(new Massage("Задача не найдена"));
                     writeResponse(exchange, error, 404);
                     break;
                 }
@@ -89,12 +89,12 @@ public class EpicHandler implements HttpHandler {
                     writeResponse(exchange, jsonListSub, 200);
                     break;
                 } catch (ManagerEpicSubtaskListException e) {
-                    String error = gson.toJson(new massage("Задача не найдена"));
+                    String error = gson.toJson(new Massage("Задача не найдена"));
                     writeResponse(exchange, error, 404);
                     break;
                 }
             case UNKNOWN:
-                String error = gson.toJson(new massage("Некорректный эндпойнт"));
+                String error = gson.toJson(new Massage("Некорректный эндпойнт"));
                 writeResponse(exchange, error, 401);
                 break;
         }

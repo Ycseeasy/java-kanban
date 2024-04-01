@@ -1,9 +1,9 @@
 package handlers;
 
-public class massage {
+public class Massage {
     private String errorMsg;
 
-    public massage(String errorMsg) {
+    public Massage(String errorMsg) {
         this.errorMsg = errorMsg;
     }
 }

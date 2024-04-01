@@ -59,11 +59,11 @@ public class SubtaskHandler implements HttpHandler {
                         responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        String error = gson.toJson(new massage("Подзадача пересекается с существующими"));
+                        String error = gson.toJson(new Massage("Подзадача пересекается с существующими"));
                         writeResponse(exchange, error, 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        String error = gson.toJson(new massage("Подзадача для обновления не найдена"));
+                        String error = gson.toJson(new Massage("Подзадача для обновления не найдена"));
                         writeResponse(exchange, error, 404);
                         break;
                     }
@@ -73,11 +73,11 @@ public class SubtaskHandler implements HttpHandler {
                         responseCode(exchange);
                         break;
                     } catch (ManagerIntersectionTimeException e) {
-                        String error = gson.toJson(new massage("Подзадача пересекается с существующими"));
+                        String error = gson.toJson(new Massage("Подзадача пересекается с существующими"));
                         writeResponse(exchange, error, 406);
                         break;
                     } catch (ManagerUpdException | ManagerAddException e) {
-                        String error = gson.toJson(new massage("Произошла ошибка при создании Задачи"));
+                        String error = gson.toJson(new Massage("Произошла ошибка при создании Задачи"));
                         writeResponse(exchange, error, 401);
                         break;
                     }
@@ -90,7 +90,7 @@ public class SubtaskHandler implements HttpHandler {
                     responseCode(exchange);
                     break;
                 } catch (ManagerDeleteException e) {
-                    String error = gson.toJson(new massage("Подзадача для удаления не найдена"));
+                    String error = gson.toJson(new Massage("Подзадача для удаления не найдена"));
                     writeResponse(exchange, error, 404);
                     break;
                 }
@@ -99,7 +99,7 @@ public class SubtaskHandler implements HttpHandler {
                 pathParts = requestPath.split("/");
                 Subtask searchedSubtask = (Subtask) manager.searchTask(Integer.parseInt(pathParts[2]));
                 if (searchedSubtask == null) {
-                    String error = gson.toJson(new massage("Подзадача не найдена"));
+                    String error = gson.toJson(new Massage("Подзадача не найдена"));
                     writeResponse(exchange, error, 404);
                     break;
                 }
@@ -107,7 +107,7 @@ public class SubtaskHandler implements HttpHandler {
                 writeResponse(exchange, jsonTask, 200);
                 break;
             case UNKNOWN:
-                String error = gson.toJson(new massage("Некорректный эндпойнт"));
+                String error = gson.toJson(new Massage("Некорректный эндпойнт"));
                 writeResponse(exchange, error, 401);
                 break;
         }
