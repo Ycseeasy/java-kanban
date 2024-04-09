@@ -1,5 +1,7 @@
 package tasks;
 
+import enums.TaskStatus;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -21,7 +23,7 @@ public class Task {
         // Для создания Таска/Сабки в мейне без стартайма
         startTime = null;
         endTime = null;
-        id = 0;
+        this.id = 0;
     }
 
     public Task(String name, String description, TaskStatus taskStatus, Duration duration, LocalDateTime startTime) {
@@ -32,7 +34,7 @@ public class Task {
         this.taskStatus = taskStatus;
         this.endTime = startTime.plus(duration);
         // Для создания Таска/Сабки в мейне
-        id = 0;
+        this.id = 0;
     }
 
     public Task(int id, String name, String description, TaskStatus taskStatus, Duration duration) {
@@ -66,7 +68,7 @@ public class Task {
         // Для создание Епика в мейне
         duration = 0;
         endTime = null;
-        id = 0;
+        this.id = 0;
     }
 
     public Task(String name, String description, TaskStatus taskStatus) {
@@ -77,7 +79,7 @@ public class Task {
         duration = 0;
         startTime = null;
         endTime = null;
-        id = 0;
+        this.id = 0;
     }
 
     public Task(int id, String name, String description, TaskStatus taskStatus, LocalDateTime startTime) {

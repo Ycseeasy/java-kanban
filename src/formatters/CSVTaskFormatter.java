@@ -1,9 +1,9 @@
-package managers;
+package formatters;
 
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import tasks.TaskStatus;
+import enums.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -16,21 +16,12 @@ public class CSVTaskFormatter {
     public String fromTask(Task task) {
         StringBuilder sb = new StringBuilder();
         int id = task.getId();
-        String type;
-        switch (task.getClass().toString()) {
-            case "class tasks.Task":
-                type = "Task";
-                break;
-            case "class tasks.Epic":
-                type = "Epic";
-                break;
-            case "class tasks.Subtask":
-                type = "Subtask";
-                break;
-            default:
-                type = null;
-                break;
-        }
+        String type = switch (task.getClass().toString()) {
+            case "class tasks.Task" -> "Task";
+            case "class tasks.Epic" -> "Epic";
+            case "class tasks.Subtask" -> "Subtask";
+            default -> null;
+        };
         LocalDateTime endTime = task.getEndTime();
         String name = task.getName();
         String taskStatus = task.getTaskStatus().toString();

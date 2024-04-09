@@ -1,11 +1,10 @@
 package managers;
 
-import exception.ManagerAddException;
-import exception.ManagerUpdException;
+import exception.*;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import tasks.TaskStatus;
+import enums.TaskStatus;
 
 import java.time.Duration;
 import java.util.*;
@@ -23,35 +22,35 @@ public class InMemoryTaskManager implements TaskManager {
             return 0;
         }
     });
-    int id = 0;
+    int id = 1;
 
     protected final HistoryManager hisManager = Managers.getDefaultHistory();
 
 
     @Override
     public Task addTask(Task task) throws ManagerAddException {
-            if (task.getStartTime() != null && task.getDuration() == Duration.ofMinutes(0)) {
-                throw new ManagerAddException("При заданной продолжительности нет времени начала");
-            }
-            if (task.getStartTime() == null && task.getDuration() != Duration.ofMinutes(0)) {
-                throw new ManagerAddException("При заданном времени начала нет продолжительности");
-            }
-            if (task.getStartTime() == null) {
-                Task addedTask = new Task(id, task.getName(), task.getDescription(), task.getTaskStatus());
-                tasks.put(addedTask.getId(), addedTask);
-                id++;
-                return addedTask;
-            }
-            Task addedTask = new Task(id, task.getName(), task.getDescription(), task.getTaskStatus(),
-                    task.getDuration(), task.getStartTime());
-            if (timeCheck(addedTask)) {
-                tasks.put(addedTask.getId(), addedTask);
-                id++;
-                addToPrioritizedList(addedTask.getId());
-                return addedTask;
-            } else {
-                throw new ManagerAddException("Ошибка пересечения времени");
-            }
+        if (task.getStartTime() != null && task.getDuration() == Duration.ofMinutes(0)) {
+            throw new ManagerAddException("При заданной продолжительности нет времени начала");
+        }
+        if (task.getStartTime() == null && task.getDuration() != Duration.ofMinutes(0)) {
+            throw new ManagerAddException("При заданном времени начала нет продолжительности");
+        }
+        if (task.getStartTime() == null) {
+            Task addedTask = new Task(id, task.getName(), task.getDescription(), task.getTaskStatus());
+            tasks.put(addedTask.getId(), addedTask);
+            id++;
+            return addedTask;
+        }
+        Task addedTask = new Task(id, task.getName(), task.getDescription(), task.getTaskStatus(),
+                task.getDuration(), task.getStartTime());
+        if (timeCheck(addedTask)) {
+            tasks.put(addedTask.getId(), addedTask);
+            id++;
+            addToPrioritizedList(addedTask.getId());
+            return addedTask;
+        } else {
+            throw new ManagerIntersectionTimeException("Ошибка пересечения времени");
+        }
     }
 
     @Override
@@ -70,57 +69,61 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Subtask> getEpicSubTaskList(int id) {
-        Epic epic = (Epic) getTask(id);
-        return epic.getEpicsSubtask();
+        if (epics.containsKey(id)) {
+            Epic epic = (Epic) getTask(id);
+            return epic.getEpicsSubtask();
+        } else {
+            throw new ManagerEpicSubtaskListException("Епик не найден");
+        }
     }
 
     @Override
     public Subtask addSubTask(Subtask subtask) {
-            if (!epics.containsKey(subtask.getEpicId())) {
-                throw new ManagerAddException("Не найден епик сабтаски на входе");
-            }
+        if (!epics.containsKey(subtask.getEpicId())) {
+            throw new ManagerAddException("Не найден епик сабтаски на входе");
+        }
 
-            if (subtask.getStartTime() != null && subtask.getDuration() == Duration.ofMinutes(0)) {
-                throw new ManagerAddException("При заданном времени начала нет продолжительности");
-            }
+        if (subtask.getStartTime() != null && subtask.getDuration() == Duration.ofMinutes(0)) {
+            throw new ManagerAddException("При заданном времени начала нет продолжительности");
+        }
 
-            if (subtask.getStartTime() == null && subtask.getDuration() != Duration.ofMinutes(0)) {
-                throw new ManagerAddException("При заданной продолжительности нет времени начала");
-            }
+        if (subtask.getStartTime() == null && subtask.getDuration() != Duration.ofMinutes(0)) {
+            throw new ManagerAddException("При заданной продолжительности нет времени начала");
+        }
 
-            Epic motherEpic = (Epic) getTask(subtask.getEpicId());
-            if (subtask.getStartTime() == null) {
-                Subtask addedSubtask = new Subtask(id, subtask.getName(), subtask.getDescription(),
-                        subtask.getTaskStatus(), subtask.getEpicId());
-                id++;
-                motherEpic.addToSubList(addedSubtask);
-                Epic updatedEpic = updEpic(motherEpic);
-                if (updatedEpic != null) {
-                    updatedEpic.addToSubList(addedSubtask);
-                    subTasks.put(addedSubtask.getId(), addedSubtask);
-                    return addedSubtask;
-                } else {
-                    motherEpic.removeFromList(addedSubtask);
-                    throw new ManagerAddException("Ошибка при обновлении Епика");
-                }
-            }
-
+        Epic motherEpic = (Epic) getTask(subtask.getEpicId());
+        if (subtask.getStartTime() == null) {
             Subtask addedSubtask = new Subtask(id, subtask.getName(), subtask.getDescription(),
-                    subtask.getTaskStatus(), subtask.getEpicId(), subtask.getDuration(), subtask.getStartTime());
+                    subtask.getTaskStatus(), subtask.getEpicId());
             id++;
-            if (timeCheck(addedSubtask)) {
-                motherEpic.addToSubList(addedSubtask);
-                Epic updatedEpic = updEpic(motherEpic);
-                if (updatedEpic != null) {
-                    updatedEpic.addToSubList(addedSubtask);
-                    subTasks.put(addedSubtask.getId(), addedSubtask);
-                    addToPrioritizedList(addedSubtask.getId());
-                    return addedSubtask;
-                } else {
-                    motherEpic.removeFromList(addedSubtask);
-                    throw new ManagerAddException("Ошибка при обновлении Епика");
-                }
-            } else throw new ManagerAddException("Ошибка пересечения времени");
+            motherEpic.addToSubList(addedSubtask);
+            Epic updatedEpic = updEpic(motherEpic);
+            if (updatedEpic != null) {
+                updatedEpic.addToSubList(addedSubtask);
+                subTasks.put(addedSubtask.getId(), addedSubtask);
+                return addedSubtask;
+            } else {
+                motherEpic.removeFromList(addedSubtask);
+                throw new ManagerAddException("Ошибка при обновлении Епика");
+            }
+        }
+
+        Subtask addedSubtask = new Subtask(id, subtask.getName(), subtask.getDescription(),
+                subtask.getTaskStatus(), subtask.getEpicId(), subtask.getDuration(), subtask.getStartTime());
+        id++;
+        if (timeCheck(addedSubtask)) {
+            motherEpic.addToSubList(addedSubtask);
+            Epic updatedEpic = updEpic(motherEpic);
+            if (updatedEpic != null) {
+                updatedEpic.addToSubList(addedSubtask);
+                subTasks.put(addedSubtask.getId(), addedSubtask);
+                addToPrioritizedList(addedSubtask.getId());
+                return addedSubtask;
+            } else {
+                motherEpic.removeFromList(addedSubtask);
+                throw new ManagerAddException("Ошибка при обновлении Епика");
+            }
+        } else throw new ManagerIntersectionTimeException("Ошибка пересечения времени");
     }
 
 
@@ -141,43 +144,43 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task updTask(Task task) {
-            if (!tasks.containsKey(task.getId())) {
-                throw new ManagerUpdException("Не найден старый таск");
-            }
-            if (task.getStartTime() != null && task.getDuration() == Duration.ofMinutes(0)) {
-                throw new ManagerUpdException("При заданном времени начала нет продолжительности");
-            }
-            if (task.getStartTime() == null && task.getDuration() != Duration.ofMinutes(0)) {
-                throw new ManagerUpdException("При заданной продолжительности нет времени начала");
-            }
-            if (task.getStartTime() == null) {
-                tasks.put(task.getId(), task);
-                return task;
-            }
-            if (timeCheck(task)) {
-                tasks.put(task.getId(), task);
-                addToPrioritizedList(task.getId());
-                return task;
-            } else {
-                throw new ManagerUpdException("Ошибка пересечения времени");
-            }
+        if (!tasks.containsKey(task.getId())) {
+            throw new ManagerUpdException("Не найден старый таск");
+        }
+        if (task.getStartTime() != null && task.getDuration() == Duration.ofMinutes(0)) {
+            throw new ManagerUpdException("При заданном времени начала нет продолжительности");
+        }
+        if (task.getStartTime() == null && task.getDuration() != Duration.ofMinutes(0)) {
+            throw new ManagerUpdException("При заданной продолжительности нет времени начала");
+        }
+        if (task.getStartTime() == null) {
+            tasks.put(task.getId(), task);
+            return task;
+        }
+        if (timeCheck(task)) {
+            tasks.put(task.getId(), task);
+            addToPrioritizedList(task.getId());
+            return task;
+        } else {
+            throw new ManagerIntersectionTimeException("Ошибка пересечения времени");
+        }
     }
 
     @Override
     public Epic updEpic(Epic epic) {
-            if (!epics.containsKey(epic.getId())) {
-                throw new ManagerUpdException("Не найден старый епик");
+        if (!epics.containsKey(epic.getId())) {
+            throw new ManagerUpdException("Не найден старый епик");
+        }
+        Epic udatedEpic = checkEpic(epic);
+        if (udatedEpic != null) {
+            epics.put(udatedEpic.getId(), udatedEpic);
+            if (udatedEpic.getStartTime() != null) {
+                addToPrioritizedList(udatedEpic.getId());
             }
-            Epic udatedEpic = checkEpic(epic);
-            if (udatedEpic != null) {
-                epics.put(udatedEpic.getId(), udatedEpic);
-                if (udatedEpic.getStartTime() != null) {
-                    addToPrioritizedList(udatedEpic.getId());
-                }
-                return udatedEpic;
-            } else {
-                throw new ManagerUpdException("Произошла ошибка при обновлении Епика");
-            }
+            return udatedEpic;
+        } else {
+            throw new ManagerUpdException("Произошла ошибка при обновлении Епика");
+        }
     }
 
     @Override
@@ -219,7 +222,7 @@ public class InMemoryTaskManager implements TaskManager {
                 throw new ManagerUpdException("Ошибка при обновлении Епика");
             }
         } else {
-            throw new ManagerUpdException("Ошибка пересечения времени");
+            throw new ManagerIntersectionTimeException("Ошибка пересечения времени");
         }
     }
 
@@ -260,17 +263,23 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(int id) {
-        hisManager.remove(id);
-        prioritizedTime.remove(getTask(id));
         if (epics.containsKey(id)) {
+            hisManager.remove(id);
+            prioritizedTime.remove(getTask(id));
             epics.remove(id);
         } else if (subTasks.containsKey(id)) {
+            hisManager.remove(id);
+            prioritizedTime.remove(getTask(id));
             Subtask subtask = (Subtask) getTask(id);
             Epic epic = (Epic) getTask(subtask.getEpicId());
             subTasks.remove(id);
             checkEpic(epic);
-        } else {
+        } else if (tasks.containsKey(id)) {
+            hisManager.remove(id);
+            prioritizedTime.remove(getTask(id));
             tasks.remove(id);
+        } else {
+            throw new ManagerDeleteException("Задача для удаления не найдена");
         }
     }
 
@@ -298,7 +307,6 @@ public class InMemoryTaskManager implements TaskManager {
                 return lastUpdEpic;
             }
         } catch (ManagerUpdException e) {
-            e.printTextError();
             return null;
         }
     }
@@ -337,9 +345,9 @@ public class InMemoryTaskManager implements TaskManager {
             updEpic.addToSubList(subtask);
         }
 
-            if (timeCheckEpic(updEpic)) {
-                return updEpic;
-            } else throw new ManagerUpdException("Ошибка пересечения времени");
+        if (timeCheckEpic(updEpic)) {
+            return updEpic;
+        } else throw new ManagerIntersectionTimeException("Ошибка пересечения времени");
     }
 
     protected Epic updStatusEpic(Epic epic) {

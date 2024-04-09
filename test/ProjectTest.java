@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import tasks.TaskStatus;
+import enums.TaskStatus;
 
 import java.io.IOException;
 import java.util.List;
@@ -76,7 +76,7 @@ class ProjectTest {
         Task task = manager.addTask( new Task("Task", "new", TaskStatus.NEW));
         Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW));
         Subtask subtask = manager.addSubTask(new Subtask("Subtask",
-                "new", TaskStatus.NEW, 1));
+                "new", TaskStatus.NEW, epic.getId()));
         assertEquals(new Task(task.getId(), "Task", "new", TaskStatus.NEW),
                 manager.searchTask(task.getId()));
         assertEquals(new Epic(epic.getId(), "Epic", "new", TaskStatus.NEW), epic);
@@ -103,8 +103,10 @@ class ProjectTest {
         manager.searchTask(task1.getId());
         List<Task> history = manager.getHistory();
         assertEquals(history.size(), 2);
-        assertEquals(history.get(task.getId()), manager.searchTask(task.getId()));
-        assertEquals(history.get(task1.getId()), manager.searchTask(task1.getId()));
+        System.out.println(task.getId());
+        System.out.println(task1.getId());
+        assertEquals(history.get(task.getId()-1), manager.searchTask(task.getId()));
+        assertEquals(history.get(task1.getId()-1), manager.searchTask(task1.getId()));
     }
 
     @Test

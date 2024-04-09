@@ -1,6 +1,5 @@
-import exception.ManagerAddException;
+import exception.ManagerIntersectionTimeException;
 import exception.ManagerSaveException;
-import exception.ManagerUpdException;
 import managers.FileBackedTaskManager;
 import managers.Managers;
 import managers.TaskManager;
@@ -8,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import tasks.TaskStatus;
+import enums.TaskStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,15 +54,15 @@ public class NewTest {
         assertEquals(manager.searchTask(epic0.getId()).getTaskStatus(), TaskStatus.DONE);
 
         // Меняем статусы сабок на ИН ПРОГРЕСС
-        manager.updSubTask(new Subtask(1, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, 0, durationSubtask, timeSubtask));
         manager.updSubTask(new Subtask(2, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, 0, durationSubtask1, timeSubtask1));
+                TaskStatus.IN_PROGRESS, epic0.getId(), durationSubtask, timeSubtask));
+        manager.updSubTask(new Subtask(3, "Subtask", "DONE",
+                TaskStatus.IN_PROGRESS, epic0.getId(), durationSubtask1, timeSubtask1));
 
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(0).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
+        assertEquals(manager.searchTask(1).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(0).getTaskStatus(), TaskStatus.IN_PROGRESS);
+        assertEquals(manager.searchTask(1).getTaskStatus(), TaskStatus.IN_PROGRESS);
     }
 
     @Test
@@ -102,15 +101,15 @@ public class NewTest {
         assertEquals(manager.searchTask(epic0.getId()).getTaskStatus(), TaskStatus.DONE);
 
         // Меняем статусы сабок на ИН ПРОГРЕСС
-        manager.updSubTask(new Subtask(1, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, 0, durationSubtask, timeSubtask));
         manager.updSubTask(new Subtask(2, "Subtask", "DONE",
-                TaskStatus.IN_PROGRESS, 0, durationSubtask1, timeSubtask1));
+                TaskStatus.IN_PROGRESS, 1, durationSubtask, timeSubtask));
+        manager.updSubTask(new Subtask(3, "Subtask", "DONE",
+                TaskStatus.IN_PROGRESS, 1, durationSubtask1, timeSubtask1));
 
         // проверяем, что ендтайм сабки, с самой поздней датой, равен енд тайму епика
-        assertEquals(manager.searchTask(0).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
+        assertEquals(manager.searchTask(1).getEndTime(), manager.searchTask(subtask2.getId()).getEndTime());
         // проверяем сменился ли статус на нужный у епика
-        assertEquals(manager.searchTask(0).getTaskStatus(), TaskStatus.IN_PROGRESS);
+        assertEquals(manager.searchTask(1).getTaskStatus(), TaskStatus.IN_PROGRESS);
     }
 
     @Test
@@ -132,7 +131,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, durationTask1, startTask1));
         Task task2 = new Task("Task2",
                 "new", TaskStatus.NEW, durationTask2, startTask2);
-        assertThrows(ManagerAddException.class, () -> manager.addTask(task2));
+        assertThrows(ManagerIntersectionTimeException.class, () -> manager.addTask(task2));
 
         // создаем 2 сабки от 1 епика в +- одно время
         Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
@@ -140,7 +139,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic.getId(), durationTask1, subStart));
         Subtask subtask2 = new Subtask("SubTask2",
                 "new", TaskStatus.NEW, epic.getId(), durationTask2, subStart2);
-        assertThrows(ManagerAddException.class, () -> manager.addSubTask(subtask2));
+        assertThrows(ManagerIntersectionTimeException.class, () -> manager.addSubTask(subtask2));
 
         // создаем 1 эпик на границе с другим
         Epic epic2 = manager.addEpic(new Epic("Корявый", "new", TaskStatus.NEW, epicStart2));
@@ -148,7 +147,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic2.getId(), durationTask2, subStart3);
         // В таком формате сабтаска не должна создаваться, потому что эпик начнет перекрывать другой эпик.
         // Тут нужно только менять дату 2 эпика
-        assertThrows(ManagerUpdException.class, () -> manager.addSubTask(subtask3));
+        assertThrows(ManagerIntersectionTimeException.class, () -> manager.addSubTask(subtask3));
     }
 
     @Test
@@ -170,7 +169,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, durationTask1, startTask1));
         Task task2 = new Task("Task2",
                 "new", TaskStatus.NEW, durationTask2, startTask2);
-        assertThrows(ManagerAddException.class, () -> manager.addTask(task2));
+        assertThrows(ManagerIntersectionTimeException.class, () -> manager.addTask(task2));
 
         // создаем 2 сабки от 1 епика в +- одно время
         Epic epic = manager.addEpic(new Epic("Epic", "new", TaskStatus.NEW, epicStart));
@@ -178,7 +177,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic.getId(), durationTask1, subStart));
         Subtask subtask2 = new Subtask("SubTask2",
                 "new", TaskStatus.NEW, epic.getId(), durationTask2, subStart2);
-        assertThrows(ManagerAddException.class, () -> manager.addSubTask(subtask2));
+        assertThrows(ManagerIntersectionTimeException.class, () -> manager.addSubTask(subtask2));
 
         // создаем 1 эпик на границе с другим
         Epic epic2 = manager.addEpic(new Epic("Корявый", "new", TaskStatus.NEW, epicStart2));
@@ -186,7 +185,7 @@ public class NewTest {
                 "new", TaskStatus.NEW, epic2.getId(), durationTask2, subStart3);
         // В таком формате сабтаска не должна создаваться, потому что эпик начнет перекрывать другой эпик.
         // Тут нужно только менять дату 2 эпика
-        assertThrows(ManagerUpdException.class, () -> manager.addSubTask(subtask3));
+        assertThrows(ManagerIntersectionTimeException.class, () -> manager.addSubTask(subtask3));
     }
 
     @Test
